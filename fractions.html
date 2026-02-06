@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraction Flashcards</title>
+    <style>
+        :root {
+            --bg-color: #fdf0d5;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #c1121f;
+            --text-main: #003049;
+            --text-muted: #669bbc;
+            --correct-color: #38b000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #sidebar {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+        }
+
+        h2 { color: var(--accent-color); margin: 0; font-size: 1.4rem; }
+        
+        .section {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .label-title { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; color: #444; }
+
+        .radio-group, .check-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label { font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover { filter: brightness(1.1); }
+
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #fdf0d5 0%, #f7d1ba 100%);
+        }
+
+        #card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 800px;
+            height: 500px;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            border: 10px solid white;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 5rem;
+            font-weight: 800;
+        }
+
+        .numerator { border-bottom: 8px solid var(--text-main); padding: 0 10px; }
+        .denominator { padding: 0 10px; }
+
+        .operator { font-size: 5rem; font-weight: 800; color: var(--accent-color); }
+
+        #answer-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            visibility: hidden;
+            margin-left: 30px;
+            color: var(--correct-color);
+        }
+
+        #answer-container.visible { visibility: visible; }
+
+        .equals { font-size: 5rem; font-weight: 800; }
+
+        .instructions {
+            position: absolute;
+            bottom: 30px;
+            color: var(--text-main);
+            opacity: 0.6;
+            font-weight: 600;
+        }
+
+        kbd { background: #333; color: white; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Fraction Lab</h2>
+        
+        <div class="section">
+            <span class="label-title">Difficulty Range</span>
+            <div class="radio-group">
+                <label><input type="radio" name="range" value="5" checked> Up to 5 (Beginner)</label>
+                <label><input type="radio" name="range" value="10"> Up to 10 (Advanced)</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <span class="label-title">Operations</span>
+            <div class="check-group">
+                <label><input type="checkbox" class="op-check" value="+" checked> Plus (+)</label>
+                <label><input type="checkbox" class="op-check" value="-" checked> Minus (−)</label>
+                <label><input type="checkbox" class="op-check" value="*"> Multiply (×)</label>
+                <label><input type="checkbox" class="op-check" value="/"> Divide (÷)</label>
+            </div>
+        </div>
+
+        <button onclick="newProblem()">Refresh Quiz</button>
+        
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto;">
+            Answers are shown in simplest form.<br><br>
+            Press <kbd>↓</kbd> to reveal answer.<br>
+            Press <kbd>↓</kbd> again for next.
+        </p>
+    </div>
+
+    <div id="main-area">
+        <div id="card">
+            <div class="fraction">
+                <div class="numerator" id="n1">1</div>
+                <div class="denominator" id="d1">2</div>
+            </div>
+
+            <div class="operator" id="op-display">+</div>
+
+            <div class="fraction">
+                <div class="numerator" id="n2">1</div>
+                <div class="denominator" id="d2">4</div>
+            </div>
+
+            <div id="answer-container">
+                <div class="equals">=</div>
+                <div class="fraction" id="ans-fraction">
+                    <div class="numerator" id="an">3</div>
+                    <div class="denominator" id="ad">4</div>
+                </div>
+            </div>
+        </div>
+        <div class="instructions">Press <b>DOWN ARROW</b> to play</div>
+    </div>
+
+    <script>
+        let answerShown = false;
+
+        function gcd(a, b) {
+            return b ? gcd(b, a % b) : a;
+        }
+
+        function simplify(num, den) {
+            const common = Math.abs(gcd(num, den));
+            return [num / common, den / common];
+        }
+
+        function newProblem() {
+            const range = parseInt(document.querySelector('input[name="range"]:checked').value);
+            const ops = Array.from(document.querySelectorAll('.op-check:checked')).map(cb => cb.value);
+            
+            if (ops.length === 0) { alert("Please select at least one operation!"); return; }
+
+            const op = ops[Math.floor(Math.random() * ops.length)];
+            
+            // Generate valid random fractions
+            let n1 = Math.floor(Math.random() * range) + 1;
+            let d1 = Math.floor(Math.random() * range) + 1;
+            let n2 = Math.floor(Math.random() * range) + 1;
+            let d2 = Math.floor(Math.random() * range) + 1;
+
+            // Prevent negative results for subtraction for now to keep it encouraging
+            if (op === '-' && (n1/d1 < n2/d2)) {
+                [n1, n2] = [n2, n1];
+                [d1, d2] = [d2, d1];
+            }
+
+            let resN, resD;
+
+            if (op === '+') {
+                resN = (n1 * d2) + (n2 * d1);
+                resD = d1 * d2;
+                document.getElementById('op-display').innerText = '+';
+            } else if (op === '-') {
+                resN = (n1 * d2) - (n2 * d1);
+                resD = d1 * d2;
+                document.getElementById('op-display').innerText = '−';
+            } else if (op === '*') {
+                resN = n1 * n2;
+                resD = d1 * d2;
+                document.getElementById('op-display').innerText = '×';
+            } else if (op === '/') {
+                resN = n1 * d2;
+                resD = d1 * n2;
+                document.getElementById('op-display').innerText = '÷';
+            }
+
+            const [finalN, finalD] = simplify(resN, resD);
+
+            // Update UI
+            document.getElementById('n1').innerText = n1;
+            document.getElementById('d1').innerText = d1;
+            document.getElementById('n2').innerText = n2;
+            document.getElementById('d2').innerText = d2;
+            
+            document.getElementById('an').innerText = finalN;
+            document.getElementById('ad').innerText = finalD;
+
+            // Handle whole numbers (hide denominator if 1)
+            document.getElementById('ad').style.visibility = (finalD === 1) ? 'hidden' : 'visible';
+            document.getElementById('ans-fraction').querySelector('.numerator').style.borderBottom = (finalD === 1) ? 'none' : '8px solid var(--correct-color)';
+
+            document.getElementById('answer-container').classList.remove('visible');
+            answerShown = false;
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                if (!answerShown) {
+                    document.getElementById('answer-container').classList.add('visible');
+                    answerShown = true;
+                } else {
+                    newProblem();
+                }
+            }
+        });
+
+        newProblem();
+		
+		/** * AAROHI MATH SUITE POWER-UP v3 (Final)
+		 * Features: Clean History (1 row/Q), Dynamic Sidebar Count, Tablet Button
+		 */
+
+		(function() {
+			const sidebar = document.getElementById('sidebar');
+			const card = document.getElementById('card');
+
+			// 1. Setup UI Elements
+			const counterDiv = document.createElement('div');
+			counterDiv.id = 'q-counter-display';
+			counterDiv.style = "font-size: 1.2rem; font-weight: bold; color: #888; margin-bottom: 10px; font-family: sans-serif;";
+			counterDiv.innerText = "Question: #1";
+			card.prepend(counterDiv);
+
+			const historyLink = document.createElement('a');
+			historyLink.id = 'history-link-main';
+			historyLink.style = "margin-top: auto; font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; cursor: pointer; display: block; padding-top: 20px;";
+			historyLink.innerText = "📜 View Session History (0)";
+			sidebar.appendChild(historyLink);
+
+			const nextBtn = document.createElement('button');
+			nextBtn.style = "position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;";
+			nextBtn.innerText = "Next Step ➔";
+			document.body.appendChild(nextBtn);
+
+			// 2. Logic & History Tracking
+			let qCount = 1;
+			let sessionHistory = [];
+			let currentProblemCache = "";
+
+			window.masterStep = function() {
+				const probEl = document.getElementById('problem') || document.getElementById('problem-text');
+				const ansEl = document.getElementById('answer');
+				
+				// State check using visibility
+				const isAnswerHidden = (window.getComputedStyle(ansEl).visibility === 'hidden' || !ansEl.classList.contains('visible'));
+
+				if (isAnswerHidden) {
+					// STEP 1: Reveal Answer
+					currentProblemCache = probEl.innerText; // Capture question text
+					if (typeof handleStep === 'function') handleStep();
+				} else {
+					// STEP 2: Save current result before moving to next question
+					sessionHistory.push({
+						no: qCount,
+						prob: currentProblemCache,
+						ans: ansEl.innerText
+					});
+					
+					// Update sidebar count immediately
+					historyLink.innerText = `📜 View Session History (${sessionHistory.length})`;
+
+					// Move to next question
+					if (typeof handleStep === 'function') handleStep();
+					qCount++;
+					counterDiv.innerText = `Question: #${qCount}`;
+				}
+			};
+
+			// 3. Bindings & Events
+			window.addEventListener('keydown', (e) => {
+				if (e.key === "ArrowDown") {
+					e.preventDefault();
+					window.masterStep();
+				}
+			}, true);
+
+			nextBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				window.masterStep();
+			});
+
+			historyLink.addEventListener('click', (e) => {
+				e.preventDefault();
+				if (sessionHistory.length === 0) return alert("No questions completed yet!");
+				
+				let report = `--- Session History (Total: ${sessionHistory.length}) ---\n\n`;
+				sessionHistory.forEach(item => {
+					report += `Q${item.no}: ${item.prob} = ${item.ans}\n`;
+				});
+				alert(report);
+			});
+		})();
+
+
+    </script>
+</body>
+</html>

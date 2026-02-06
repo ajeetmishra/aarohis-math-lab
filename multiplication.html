@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Flashcards Pro</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #7209b7;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --correct-color: #38b000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+        
+        .input-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 0.4rem; 
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+        
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(114, 9, 183, 0.2);
+        }
+
+        button:hover { background-color: #560bad; }
+        button:active { transform: translateY(2px); }
+
+        /* Main Area Styling */
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        #card {
+            background: var(--card-bg);
+            width: 85%;
+            max-width: 700px;
+            height: 450px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid white;
+        }
+
+        #problem {
+            font-size: 7rem; /* Adjusted for 3 numbers */
+            margin: 0;
+            font-weight: 900;
+            color: #3f37c9;
+            line-height: 1;
+        }
+
+        #answer {
+            font-size: 5.5rem;
+            color: var(--correct-color);
+            margin-top: 30px;
+            height: 1.2em;
+            font-weight: 800;
+            visibility: hidden;
+        }
+
+        #answer.visible { visibility: visible; }
+
+        .instructions {
+            position: absolute;
+            bottom: 30px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        kbd {
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Math Settings</h2>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="allSame">
+            <label for="allSame">Practice Squares / Cubes<br><small>(All numbers will be same)</small></label>
+        </div>
+
+        <hr style="width:100%; border: 0.5px solid #eee;">
+
+        <div class="input-group">
+            <label>Number 1 (Min - Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min1" value="2" style="width:50%">
+                <input type="number" id="max1" value="12" style="width:50%">
+            </div>
+        </div>
+
+        <div class="input-group" id="group2">
+            <label>Number 2 (Min - Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min2" value="2" style="width:50%">
+                <input type="number" id="max2" value="12" style="width:50%">
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="enable3rd" onchange="toggle3rd()">
+            <label for="enable3rd">Add 3rd Number</label>
+        </div>
+
+        <div class="input-group" id="group3" style="display:none;">
+            <label>Number 3 (Min - Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min3" value="2" style="width:50%">
+                <input type="number" id="max3" value="5" style="width:50%">
+            </div>
+        </div>
+
+        <button onclick="newGame()">Start Practice</button>
+        
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto; line-height: 1.4;">
+            Use <kbd>↓</kbd> to reveal answer.<br>
+            Use <kbd>↓</kbd> again for next.
+        </p>
+    </div>
+
+    <div id="main-area">
+        <div id="card">
+            <p id="problem">--</p>
+            <p id="answer">--</p>
+        </div>
+        <div class="instructions">Press <b>DOWN ARROW</b> to reveal or skip</div>
+    </div>
+
+    <script>
+        let currentResult;
+        let answerVisible = false;
+
+        const problemEl = document.getElementById('problem');
+        const answerEl = document.getElementById('answer');
+
+        function toggle3rd() {
+            const group3 = document.getElementById('group3');
+            group3.style.display = document.getElementById('enable3rd').checked ? 'flex' : 'none';
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (parseInt(max) - parseInt(min) + 1)) + parseInt(min);
+        }
+
+        function generateProblem() {
+            const use3rd = document.getElementById('enable3rd').checked;
+            const allSame = document.getElementById('allSame').checked;
+
+            let n1, n2, n3;
+
+            // Base Number
+            n1 = getRandomInt(document.getElementById('min1').value, document.getElementById('max1').value);
+
+            if (allSame) {
+                n2 = n1;
+                n3 = n1;
+            } else {
+                n2 = getRandomInt(document.getElementById('min2').value, document.getElementById('max2').value);
+                if (use3rd) {
+                    n3 = getRandomInt(document.getElementById('min3').value, document.getElementById('max3').value);
+                }
+            }
+
+            // Construct Equation
+            let expression = `${n1} × ${n2}`;
+            let result = n1 * n2;
+
+            if (use3rd) {
+                expression += ` × ${n3}`;
+                result *= n3;
+            }
+
+            // UI Updates
+            problemEl.innerText = expression;
+            answerEl.innerText = result;
+            
+            // Auto-adjust font size for 3 numbers
+            problemEl.style.fontSize = use3rd ? '5.5rem' : '7.5rem';
+            
+            answerEl.classList.remove('visible');
+            answerVisible = false;
+        }
+
+        function handleStep() {
+            if (!answerVisible) {
+                answerEl.classList.add('visible');
+                answerVisible = true;
+            } else {
+                generateProblem();
+            }
+        }
+
+        function newGame() {
+            generateProblem();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                handleStep();
+            }
+        });
+
+        // Init
+        generateProblem();
+		
+		
+		/** * AAROHI MATH SUITE POWER-UP v3 (Final)
+		 * Features: Clean History (1 row/Q), Dynamic Sidebar Count, Tablet Button
+		 */
+
+		(function() {
+			const sidebar = document.getElementById('sidebar');
+			const card = document.getElementById('card');
+
+			// 1. Setup UI Elements
+			const counterDiv = document.createElement('div');
+			counterDiv.id = 'q-counter-display';
+			counterDiv.style = "font-size: 1.2rem; font-weight: bold; color: #888; margin-bottom: 10px; font-family: sans-serif;";
+			counterDiv.innerText = "Question: #1";
+			card.prepend(counterDiv);
+
+			const historyLink = document.createElement('a');
+			historyLink.id = 'history-link-main';
+			historyLink.style = "margin-top: auto; font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; cursor: pointer; display: block; padding-top: 20px;";
+			historyLink.innerText = "📜 View Session History (0)";
+			sidebar.appendChild(historyLink);
+
+			const nextBtn = document.createElement('button');
+			nextBtn.style = "position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;";
+			nextBtn.innerText = "Next Step ➔";
+			document.body.appendChild(nextBtn);
+
+			// 2. Logic & History Tracking
+			let qCount = 1;
+			let sessionHistory = [];
+			let currentProblemCache = "";
+
+			window.masterStep = function() {
+				const probEl = document.getElementById('problem') || document.getElementById('problem-text');
+				const ansEl = document.getElementById('answer');
+				
+				// State check using visibility
+				const isAnswerHidden = (window.getComputedStyle(ansEl).visibility === 'hidden' || !ansEl.classList.contains('visible'));
+
+				if (isAnswerHidden) {
+					// STEP 1: Reveal Answer
+					currentProblemCache = probEl.innerText; // Capture question text
+					if (typeof handleStep === 'function') handleStep();
+				} else {
+					// STEP 2: Save current result before moving to next question
+					sessionHistory.push({
+						no: qCount,
+						prob: currentProblemCache,
+						ans: ansEl.innerText
+					});
+					
+					// Update sidebar count immediately
+					historyLink.innerText = `📜 View Session History (${sessionHistory.length})`;
+
+					// Move to next question
+					if (typeof handleStep === 'function') handleStep();
+					qCount++;
+					counterDiv.innerText = `Question: #${qCount}`;
+				}
+			};
+
+			// 3. Bindings & Events
+			window.addEventListener('keydown', (e) => {
+				if (e.key === "ArrowDown") {
+					e.preventDefault();
+					window.masterStep();
+				}
+			}, true);
+
+			nextBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				window.masterStep();
+			});
+
+			historyLink.addEventListener('click', (e) => {
+				e.preventDefault();
+				if (sessionHistory.length === 0) return alert("No questions completed yet!");
+				
+				let report = `--- Session History (Total: ${sessionHistory.length}) ---\n\n`;
+				sessionHistory.forEach(item => {
+					report += `Q${item.no}: ${item.prob} = ${item.ans}\n`;
+				});
+				alert(report);
+			});
+		})();
+
+
+    </script>
+</body>
+</html>

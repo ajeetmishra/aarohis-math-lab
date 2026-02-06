@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aarohi's Math Lab</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --primary: #0284c7;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #0369a1;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 1100px;
+        }
+        .card {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 4px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: #bae6fd;
+        }
+        .icon {
+            font-size: 3.5rem;
+            margin-bottom: 16px;
+        }
+        .title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0c4a6e;
+            margin-bottom: 8px;
+        }
+        .desc {
+            font-size: 0.95rem;
+            color: #475569;
+            line-height: 1.5;
+        }
+        /* Color Accents */
+        .card.blue { border-bottom: 8px solid #38bdf8; }
+        .card.purple { border-bottom: 8px solid #a855f7; }
+        .card.green { border-bottom: 8px solid #4ade80; }
+        .card.orange { border-bottom: 8px solid #fb923c; }
+        .card.pink { border-bottom: 8px solid #f472b6; }
+        .card.indigo { border-bottom: 8px solid #6366f1; }
+        .card.teal { border-bottom: 8px solid #2dd4bf; }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Aarohi's Math Lab</h1>
+    <p class="subtitle">Select a mission to start your training!</p>
+
+    <div class="grid">
+        <div class="card teal" onclick="location.href='geometry.html'">
+            <span class="icon">📐</span>
+            <div class="title">Robotics Compass</div>
+            <div class="desc">Explore angles and shapes with a visual grid.</div>
+        </div>
+
+        <div class="card blue" onclick="location.href='number_theory.html'">
+            <span class="icon">🔢</span>
+            <div class="title">Number Hunter</div>
+            <div class="desc">Master Primes, Factors, HCF, and LCM.</div>
+        </div>
+
+        <div class="card orange" onclick="location.href='estimation.html'">
+            <span class="icon">🧠</span>
+            <div class="title">Estimation Station</div>
+            <div class="desc">Learn to round numbers and guess like a pro.</div>
+        </div>
+
+        <div class="card green" onclick="location.href='fractions.html'">
+            <span class="icon">🍕</span>
+            <div class="title">Fraction Lab</div>
+            <div class="desc">Practical practice for all four fraction operations.</div>
+        </div>
+
+        <div class="card pink" onclick="location.href='converter.html'">
+            <span class="icon">🧵</span>
+            <div class="title">Tailor's Measure</div>
+            <div class="desc">Convert Metric, Imperial, and large denominations.</div>
+        </div>
+
+        <div class="card indigo" onclick="location.href='multiplication.html'">
+            <span class="icon">✖️</span>
+            <div class="title">Multiplication Pro</div>
+            <div class="desc">Master single and double-digit multiplication.</div>
+        </div>
+
+        <div class="card purple" onclick="location.href='fast_track.html'">
+            <span class="icon">⚡</span>
+            <div class="title">Fast-Track Math</div>
+            <div class="desc">Translate between %, Fractions, and Decimals instantly.</div>
+        </div>
+
+    </div>
+
+</body>
+</html>

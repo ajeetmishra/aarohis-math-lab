@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aarohi's Number Theory Hunter Pro</title>
+    <style>
+        :root {
+            --bg-color: #f0f7ff;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #0077b6;
+            --text-main: #023e8a;
+            --text-muted: #48cae4;
+            --logic-color: #fb8500;
+            --ans-color: #38b000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #sidebar {
+            width: 320px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+        }
+
+        h2 { color: var(--accent-color); margin: 0; font-size: 1.4rem; }
+        
+        .section {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .label-title { font-weight: bold; font-size: 0.8rem; text-transform: uppercase; color: #666; }
+
+        select, input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover { filter: brightness(1.1); }
+
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #ffffff 0%, #e0f2fe 100%);
+        }
+
+        #card {
+            background: var(--card-bg);
+            width: 85%;
+            max-width: 800px;
+            height: 550px;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 10px solid white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        #mode-title { font-size: 1.2rem; text-transform: uppercase; color: var(--text-muted); font-weight: bold; margin-bottom: 10px;}
+        #problem { font-size: 5rem; font-weight: 800; margin: 0; }
+        
+        #logic-bridge { 
+            font-size: 2rem; 
+            color: var(--logic-color); 
+            font-weight: 600; 
+            margin: 20px 0;
+            background: #fffbf0;
+            padding: 15px 30px;
+            border-radius: 20px;
+            visibility: hidden;
+            max-width: 90%;
+        }
+
+        #answer {
+            font-size: 3.5rem;
+            color: var(--ans-color);
+            font-weight: 800;
+            visibility: hidden;
+        }
+
+        .visible { visibility: visible !important; }
+
+        .footer-info { position: absolute; bottom: 30px; font-size: 0.9rem; color: #888; }
+        kbd { background: #333; color: white; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Number Theory</h2>
+        
+        <div class="section">
+            <span class="label-title">Challenge Mode</span>
+            <select id="modeSelect" onchange="newProblem()">
+                <option value="prime">Prime or Composite?</option>
+                <option value="factors">Guess the Factors</option>
+                <option value="lcm">Find the LCM</option>
+                <option value="hcf">Find the HCF (GCD)</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <span class="label-title">Range Settings</span>
+            <label style="font-size: 0.75rem;">Min Value</label>
+            <input type="number" id="minVal" value="2">
+            <label style="font-size: 0.75rem;">Max Value</label>
+            <input type="number" id="maxVal" value="100">
+        </div>
+
+        <button onclick="newProblem()">Update & New Challenge</button>
+        
+        <div style="margin-top: auto; font-size: 0.85rem; color: #666; line-height: 1.6;">
+            <b>Down Arrow Controls:</b><br>
+            1. Problem <br>
+            2. Thinking Step <br>
+            3. Final Answer
+        </div>
+    </div>
+
+    <div id="main-area">
+        <div id="card">
+            <div id="mode-title">LOADING...</div>
+            <div id="problem">--</div>
+            <div id="logic-bridge">--</div>
+            <div id="answer">--</div>
+        </div>
+        <div class="footer-info">Press <kbd>↓</kbd> to step through the challenge</div>
+    </div>
+
+    <script>
+        let currentStep = 0; 
+
+        // Core Math Utilities
+        const getFactors = (n) => {
+            let factors = [];
+            for (let i = 1; i <= n; i++) if (n % i === 0) factors.push(i);
+            return factors;
+        };
+
+        const getHCF = (a, b) => b ? getHCF(b, a % b) : a;
+        const getLCM = (a, b) => Math.abs(a * b) / getHCF(a, b);
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function newProblem() {
+            currentStep = 0;
+            document.getElementById('logic-bridge').classList.remove('visible');
+            document.getElementById('answer').classList.remove('visible');
+
+            const mode = document.getElementById('modeSelect').value;
+            const min = parseInt(document.getElementById('minVal').value);
+            const max = parseInt(document.getElementById('maxVal').value);
+
+            const probEl = document.getElementById('problem');
+            const logicEl = document.getElementById('logic-bridge');
+            const ansEl = document.getElementById('answer');
+            const titleEl = document.getElementById('mode-title');
+
+            // Respect user input for both numbers
+            let n1 = getRandomInt(min, max);
+            let n2 = getRandomInt(min, max);
+
+            if (mode === 'prime') {
+                titleEl.innerText = "Prime or Composite?";
+                probEl.innerText = n1;
+                const factors = getFactors(n1);
+                if (factors.length === 2) {
+                    logicEl.innerText = `Think: Does anything besides 1 and ${n1} fit?`;
+                    ansEl.innerText = "PRIME";
+                } else {
+                    logicEl.innerText = `Think: Try dividing by 2, 3, 5, or 7...`;
+                    ansEl.innerText = `COMPOSITE (${factors[1]} × ${n1/factors[1]})`;
+                }
+            } 
+            
+            else if (mode === 'factors') {
+                titleEl.innerText = "List the Factors";
+                probEl.innerText = n1;
+                logicEl.innerText = `Think: Find the factor pairs for ${n1}`;
+                ansEl.innerText = getFactors(n1).join(", ");
+                ansEl.style.fontSize = "2.5rem"; 
+            }
+
+            else if (mode === 'hcf') {
+                titleEl.innerText = "Find the HCF (GCD)";
+                // Ensure n1 is the larger one for better visual logic
+                if (n2 > n1) [n1, n2] = [n2, n1];
+                probEl.innerText = `${n1} & ${n2}`;
+                const hcf = getHCF(n1, n2);
+                logicEl.innerText = `Think: What is the largest factor of ${n2} that also divides ${n1}?`;
+                ansEl.innerText = hcf;
+                ansEl.style.fontSize = "5rem";
+            }
+
+            else if (mode === 'lcm') {
+                titleEl.innerText = "Find the LCM";
+                if (n2 > n1) [n1, n2] = [n2, n1];
+                probEl.innerText = `${n1} & ${n2}`;
+                const lcm = getLCM(n1, n2);
+                logicEl.innerText = `Think: Count by ${n1}: ${n1}, ${n1*2}, ${n1*3}... which is divisible by ${n2}?`;
+                ansEl.innerText = lcm;
+                ansEl.style.fontSize = "5rem";
+            }
+        }
+
+        function handleStep() {
+            if (currentStep === 0) {
+                document.getElementById('logic-bridge').classList.add('visible');
+                currentStep = 1;
+            } else if (currentStep === 1) {
+                document.getElementById('answer').classList.add('visible');
+                currentStep = 2;
+            } else {
+                newProblem();
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                handleStep();
+            }
+        });
+
+        // Initialize on load
+        newProblem();
+
+		/** * AAROHI MATH SUITE POWER-UP v3 (Final)
+		 * Features: Clean History (1 row/Q), Dynamic Sidebar Count, Tablet Button
+		 */
+
+		(function() {
+			const sidebar = document.getElementById('sidebar');
+			const card = document.getElementById('card');
+
+			// 1. Setup UI Elements
+			const counterDiv = document.createElement('div');
+			counterDiv.id = 'q-counter-display';
+			counterDiv.style = "font-size: 1.2rem; font-weight: bold; color: #888; margin-bottom: 10px; font-family: sans-serif;";
+			counterDiv.innerText = "Question: #1";
+			card.prepend(counterDiv);
+
+			const historyLink = document.createElement('a');
+			historyLink.id = 'history-link-main';
+			historyLink.style = "margin-top: auto; font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; cursor: pointer; display: block; padding-top: 20px;";
+			historyLink.innerText = "📜 View Session History (0)";
+			sidebar.appendChild(historyLink);
+
+			const nextBtn = document.createElement('button');
+			nextBtn.style = "position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;";
+			nextBtn.innerText = "Next Step ➔";
+			document.body.appendChild(nextBtn);
+
+			// 2. Logic & History Tracking
+			let qCount = 1;
+			let sessionHistory = [];
+			let currentProblemCache = "";
+
+			window.masterStep = function() {
+				const probEl = document.getElementById('problem') || document.getElementById('problem-text');
+				const ansEl = document.getElementById('answer');
+				
+				// State check using visibility
+				const isAnswerHidden = (window.getComputedStyle(ansEl).visibility === 'hidden' || !ansEl.classList.contains('visible'));
+
+				if (isAnswerHidden) {
+					// STEP 1: Reveal Answer
+					currentProblemCache = probEl.innerText; // Capture question text
+					if (typeof handleStep === 'function') handleStep();
+				} else {
+					// STEP 2: Save current result before moving to next question
+					sessionHistory.push({
+						no: qCount,
+						prob: currentProblemCache,
+						ans: ansEl.innerText
+					});
+					
+					// Update sidebar count immediately
+					historyLink.innerText = `📜 View Session History (${sessionHistory.length})`;
+
+					// Move to next question
+					if (typeof handleStep === 'function') handleStep();
+					qCount++;
+					counterDiv.innerText = `Question: #${qCount}`;
+				}
+			};
+
+			// 3. Bindings & Events
+			window.addEventListener('keydown', (e) => {
+				if (e.key === "ArrowDown") {
+					e.preventDefault();
+					window.masterStep();
+				}
+			}, true);
+
+			nextBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				window.masterStep();
+			});
+
+			historyLink.addEventListener('click', (e) => {
+				e.preventDefault();
+				if (sessionHistory.length === 0) return alert("No questions completed yet!");
+				
+				let report = `--- Session History (Total: ${sessionHistory.length}) ---\n\n`;
+				sessionHistory.forEach(item => {
+					report += `Q${item.no}: ${item.prob} = ${item.ans}\n`;
+				});
+				alert(report);
+			});
+		})();
+
+
+    </script>
+</body>
+</html>
