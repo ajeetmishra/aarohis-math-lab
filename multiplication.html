@@ -5,6 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multiplication Flashcards Pro</title>
     <style>
+
+		/* Ensure the main area never grows beyond the screen */
+		#main-area {
+			height: 100vh;
+			width: 100vw;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden; /* Prevents scrolling */
+			position: relative;
+		}
+
+		/* Make the card responsive rather than fixed height */
+		#card {
+			max-height: 85vh; /* Never more than 85% of screen height */
+			max-width: 90vw;  /* Never more than 90% of screen width */
+			height: auto;     /* Let content define height up to the max */
+			min-height: 300px;
+			padding: 20px;
+			box-sizing: border-box; /* Includes padding in height calculation */
+		}
+
+		/* Ensure the answer doesn't push elements off-screen */
+		#answer {
+			margin-top: 10px;
+			line-height: 1;
+		}
+
 		/* --- RESPONSIVE MOBILE-FIRST OVERRIDES --- */
 		@media (max-width: 768px) {
 			body {
@@ -454,6 +482,62 @@
 				}
 			};
 		})();
+/** * AAROHI MATH SUITE: IMMERSIVE FULL-SCREEN POWER-UP 
+ * Fixes: Overflowing answers, zooming issues, and adds Full-Screen toggle.
+ */
+
+(function() {
+    // 1. Force the page to fit the viewport and disable accidental zooming
+    const meta = document.createElement('meta');
+    meta.name = "viewport";
+    meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+    document.getElementsByTagName('head')[0].appendChild(meta);
+
+    // 2. Create the Full Screen Toggle Button
+    const fsBtn = document.createElement('button');
+    fsBtn.id = 'fs-toggle';
+    fsBtn.innerHTML = '⛶ Full Screen';
+    fsBtn.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
+    document.body.appendChild(fsBtn);
+
+    // 3. Full Screen Logic
+    fsBtn.onclick = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                alert(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+            fsBtn.innerHTML = '✕ Exit Full Screen';
+        } else {
+            document.exitFullscreen();
+            fsBtn.innerHTML = '⛶ Full Screen';
+        }
+    };
+
+    // 4. "Auto-Scale" Logic: Shrinks the card if it exceeds the screen height
+    function adjustScale() {
+        const card = document.getElementById('card');
+        const main = document.getElementById('main-area');
+        if (!card || !main) return;
+
+        // Reset scale to calculate true size
+        card.style.transform = 'scale(1)';
+        
+        const padding = 40; // Safety margin
+        const availableHeight = window.innerHeight - padding;
+        const cardHeight = card.offsetHeight;
+
+        if (cardHeight > availableHeight) {
+            const scaleFactor = availableHeight / cardHeight;
+            card.style.transform = `scale(${scaleFactor})`;
+            card.style.transformOrigin = 'center center';
+        }
+    }
+
+    // Run on load and whenever the screen orientation changes
+    window.addEventListener('resize', adjustScale);
+    window.addEventListener('orientationchange', adjustScale);
+    setTimeout(adjustScale, 100); // Initial check
+})();
 
     </script>
 </body>

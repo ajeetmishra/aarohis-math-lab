@@ -5,219 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aarohi's Estimation Station</title>
     <style>
-
-		/* --- RESPONSIVE MOBILE-FIRST OVERRIDES --- */
+        /* Existing Styles ... */
+		#main-area { height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+		#card { max-height: 85vh; max-width: 90vw; height: auto; min-height: 300px; padding: 20px; box-sizing: border-box; background: #ffffff; border-radius: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.1); border: 10px solid white; text-align: center; }
+		#answer { margin-top: 10px; line-height: 1; }
 		@media (max-width: 768px) {
-			body {
-				flex-direction: column; /* Stack sidebar and main area */
-				overflow: auto;
-			}
-
-			#sidebar {
-				position: fixed;
-				left: -100%; /* Hide off-screen by default */
-				top: 0;
-				bottom: 0;
-				width: 80%; /* Take most of the screen when open */
-				transition: 0.3s ease;
-				z-index: 2000;
-				box-shadow: 10px 0 30px rgba(0,0,0,0.2);
-			}
-
-			#sidebar.open {
-				left: 0; /* Slide in */
-			}
-
-			#main-area {
-				width: 100vw;
-				height: 100vh;
-				padding: 10px;
-			}
-
-			#card {
-				width: 95%;
-				height: 70vh; /* Scaled to screen height */
-				margin-top: 50px;
-			}
-
-			/* Floating Toggle Button for Settings */
-			#menu-toggle {
-				display: block !important;
-				position: fixed;
-				top: 15px;
-				left: 15px;
-				z-index: 3000;
-				background: var(--accent-color);
-				color: white;
-				border: none;
-				padding: 10px 15px;
-				border-radius: 8px;
-				font-weight: bold;
-			}
-
-			/* Adjust large text for small screens */
+			body { flex-direction: column; overflow: auto; }
+			#sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; transition: 0.3s ease; z-index: 2000; box-shadow: 10px 0 30px rgba(0,0,0,0.2); }
+			#sidebar.open { left: 0; }
+			#main-area { width: 100vw; height: 100vh; padding: 10px; }
+			#card { width: 95%; height: 70vh; margin-top: 50px; }
+			#menu-toggle { display: block !important; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-color); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+			#fs-toggle { top: 10px !important; right: 10px !important; padding: 8px 12px !important; font-size: 0.8rem !important; }
 			#problem, #problem-text { font-size: 3rem !important; }
-			#answer { font-size: 2.5rem !important; }
 		}
-
-		/* Hide toggle on desktop */
 		#menu-toggle { display: none; }
-
-        :root {
-            --bg-color: #f0fff4;
-            --sidebar-bg: #ffffff;
-            --card-bg: #ffffff;
-            --accent-color: #2d6a4f;
-            --text-main: #1b4332;
-            --text-muted: #52b788;
-            --logic-color: #ff8c00; 
-            --actual-color: #0077b6;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #sidebar {
-            width: 320px;
-            background-color: var(--sidebar-bg);
-            padding: 1.5rem;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            z-index: 10;
-            overflow-y: auto;
-        }
-
+        :root { --bg-color: #f0fff4; --sidebar-bg: #ffffff; --card-bg: #ffffff; --accent-color: #2d6a4f; --text-main: #1b4332; --text-muted: #52b788; --logic-color: #ff8c00; --actual-color: #0077b6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        #sidebar { width: 320px; background-color: var(--sidebar-bg); padding: 1.5rem; box-shadow: 4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1rem; z-index: 10; overflow-y: auto; }
         h2 { color: var(--accent-color); margin: 0; font-size: 1.5rem; }
-        
-        .section {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
+        .section { background: #f8f9fa; padding: 12px; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; }
         .label-title { font-weight: bold; font-size: 0.85rem; text-transform: uppercase; color: #444; }
-
         label { font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-
-        button {
-            padding: 1rem;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
+        button { padding: 1rem; background-color: var(--accent-color); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
         button:hover { filter: brightness(1.2); }
-
-        #main-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f0fff4 0%, #d7f9e9 100%);
-        }
-
-        #card {
-            background: var(--card-bg);
-            width: 85%;
-            max-width: 800px;
-            height: 550px;
-            border-radius: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 10px solid white;
-            text-align: center;
-            padding: 20px;
-        }
-
+        #main-area { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #f0fff4 0%, #d7f9e9 100%); }
         #problem { font-size: 5.5rem; font-weight: 800; margin-bottom: 20px; }
-        
-        #think-step { 
-            font-size: 2.5rem; 
-            color: var(--logic-color); 
-            font-weight: 600; 
-            margin: 10px 0;
-            visibility: hidden;
-            background: #fff8f0;
-            padding: 10px 30px;
-            border-radius: 50px;
-        }
-
-        #results {
-            display: flex;
-            gap: 50px;
-            margin-top: 20px;
-            visibility: hidden;
-        }
-
+        #think-step { font-size: 2.5rem; color: var(--logic-color); font-weight: 600; margin: 10px 0; visibility: hidden; background: #fff8f0; padding: 10px 30px; border-radius: 50px; }
+        #results { display: flex; gap: 50px; margin-top: 20px; visibility: hidden; }
         .result-box { display: flex; flex-direction: column; align-items: center; }
         .result-label { font-size: 1rem; font-weight: bold; text-transform: uppercase; color: var(--text-muted); }
         .result-val { font-size: 3.5rem; font-weight: 800; }
-        
         .estimated .result-val { color: var(--logic-color); }
         .actual .result-val { color: var(--actual-color); }
-
         .visible { visibility: visible !important; }
-
         .instructions { position: absolute; bottom: 30px; opacity: 0.6; font-weight: 600; }
         kbd { background: #333; color: white; padding: 2px 6px; border-radius: 4px; }
     </style>
 </head>
 <body>
-
     <div id="sidebar">
         <h2>Estimation Lab</h2>
-        
         <div class="section">
             <span class="label-title">Number Types</span>
-            <label><input type="checkbox" class="type-check" value="int" checked> Whole Numbers (99, 12)</label>
-            <label><input type="checkbox" class="type-check" value="dec" checked> Decimals (2.98, 1.1)</label>
-            <label><input type="checkbox" class="type-check" value="frac"> Fractions (9/10, 1/5)</label>
+            <label><input type="checkbox" class="type-check" value="int" checked> Whole Numbers</label>
+            <label><input type="checkbox" class="type-check" value="dec" checked> Decimals</label>
+            <label><input type="checkbox" class="type-check" value="frac"> Fractions</label>
         </div>
-
         <div class="section">
             <span class="label-title">Complexity</span>
-            <label><input type="radio" name="level" value="1" checked> Level 1 (Friendly 10s)</label>
-            <label><input type="radio" name="level" value="2"> Level 2 (Wild 100s & Decs)</label>
+            <label><input type="radio" name="level" value="1" checked> Level 1</label>
+            <label><input type="radio" name="level" value="2"> Level 2</label>
         </div>
-
         <div class="section">
             <span class="label-title">Operations</span>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                <label><input type="checkbox" class="op-check" value="+" checked> (+) Plus</label>
-                <label><input type="checkbox" class="op-check" value="-" checked> (-) Minus</label>
-                <label><input type="checkbox" class="op-check" value="*" checked> (×) Times</label>
-                <label><input type="checkbox" class="op-check" value="/"> (÷) Divide</label>
+                <label><input type="checkbox" class="op-check" value="+" checked> (+)</label>
+                <label><input type="checkbox" class="op-check" value="-" checked> (-)</label>
+                <label><input type="checkbox" class="op-check" value="*" checked> (×)</label>
+                <label><input type="checkbox" class="op-check" value="/"> (÷)</label>
             </div>
         </div>
-
         <button id="newChallengeBtn">New Challenge</button>
-        
-        <p style="font-size: 0.8rem; color: #666; margin-top: auto;">
-            1. See problem.<br>
-            2. Press <kbd>↓</kbd> to see <b>"Think"</b> logic.<br>
-            3. Press <kbd>↓</kbd> to see <b>Answers</b>.
-        </p>
     </div>
 
     <div id="main-area">
@@ -225,237 +74,150 @@
             <div id="problem">--</div>
             <div id="think-step">--</div>
             <div id="results">
-                <div class="result-box estimated">
-                    <span class="result-label">Estimate</span>
-                    <span class="result-val" id="est-val">--</span>
-                </div>
-                <div class="result-box actual">
-                    <span class="result-label">Actual</span>
-                    <span class="result-val" id="act-val">--</span>
-                </div>
+                <div class="result-box estimated"><span class="result-label">Est.</span><span class="result-val" id="est-val">--</span></div>
+                <div class="result-box actual"><span class="result-label">Act.</span><span class="result-val" id="act-val">--</span></div>
             </div>
         </div>
-        <div class="instructions">Use the <b>DOWN ARROW</b> to play</div>
     </div>
 
     <script>
-        // Global State
         let currentStep = 0; 
+        function getFriendly(n, type) { n = parseFloat(n); if (type === 'int') { if (n < 20) return Math.round(n / 5) * 5; if (n < 100) return Math.round(n / 10) * 10; return Math.round(n / 100) * 100; } if (type === 'dec') return Math.round(n); if (type === 'frac') { if (n < 0.3) return 0; if (n < 0.7) return 0.5; return 1; } return n; }
 
-        // Helper: Rounding logic for "Friendly Numbers"
-        function getFriendly(n, type) {
-            n = parseFloat(n);
-            if (type === 'int') {
-                if (n < 20) return Math.round(n / 5) * 5;
-                if (n < 100) return Math.round(n / 10) * 10;
-                return Math.round(n / 100) * 100;
-            }
-            if (type === 'dec') return Math.round(n);
-            if (type === 'frac') {
-                if (n < 0.3) return 0;
-                if (n < 0.7) return 0.5;
-                return 1;
-            }
-            return n;
-        }
-
-        // Main Function: Generate and Display
         function newProblem() {
-            currentStep = 0;
-            document.getElementById('think-step').classList.remove('visible');
-            document.getElementById('results').classList.remove('visible');
-
+            currentStep = 0; document.getElementById('think-step').classList.remove('visible'); document.getElementById('results').classList.remove('visible');
             const types = Array.from(document.querySelectorAll('.type-check:checked')).map(c => c.value);
             const ops = Array.from(document.querySelectorAll('.op-check:checked')).map(c => c.value);
             const level = document.querySelector('input[name="level"]:checked').value;
-
-            if (!types.length || !ops.length) {
-                alert("Please select at least one Number Type and one Operation!");
-                return;
-            }
-
+            if (!types.length || !ops.length) return;
             const type = types[Math.floor(Math.random() * types.length)];
             const op = ops[Math.floor(Math.random() * ops.length)];
-
             let n1, n2, disp1, disp2;
-
-            // Problem Generation Logic
-            if (type === 'int') {
-                const range = (level == "1") ? [10, 50] : [50, 500];
-                n1 = Math.floor(Math.random() * (range[1] - range[0])) + range[0];
-                n2 = Math.floor(Math.random() * (range[1] / 2 - 5)) + 5;
-                // Add "edge" flavor for rounding
-                if (Math.random() > 0.5) n1 = Math.round(n1 / 10) * 10 + (Math.random() > 0.5 ? 1 : -1);
-                disp1 = n1; disp2 = n2;
-            } else if (type === 'dec') {
-                n1 = (Math.random() * 10 + 1).toFixed(2);
-                n2 = (Math.random() * 5 + 1).toFixed(2);
-                disp1 = n1; disp2 = n2;
-            } else {
-                const d1 = Math.floor(Math.random() * 8) + 2;
-                const num1 = Math.floor(Math.random() * (d1 - 1)) + 1;
-                const d2 = Math.floor(Math.random() * 8) + 2;
-                const num2 = Math.floor(Math.random() * (d2 - 1)) + 1;
-                n1 = num1 / d1;
-                n2 = num2 / d2;
-                disp1 = `${num1}/${d1}`;
-                disp2 = `${num2}/${d2}`;
-            }
-
-            const f1 = getFriendly(n1, type);
-            const f2 = getFriendly(n2, type);
-
-            let actual, estimated;
-            const opSym = { '+': '+', '-': '−', '*': '×', '/': '÷' }[op];
-
+            if (type === 'int') { const range = (level == "1") ? [10, 50] : [50, 500]; n1 = Math.floor(Math.random() * (range[1] - range[0])) + range[0]; n2 = Math.floor(Math.random() * (range[1] / 2 - 5)) + 5; if (Math.random() > 0.5) n1 = Math.round(n1 / 10) * 10 + (Math.random() > 0.5 ? 1 : -1); disp1 = n1; disp2 = n2; }
+            else if (type === 'dec') { n1 = (Math.random() * 10 + 1).toFixed(2); n2 = (Math.random() * 5 + 1).toFixed(2); disp1 = n1; disp2 = n2; }
+            else { const d1 = Math.floor(Math.random() * 8) + 2; const num1 = Math.floor(Math.random() * (d1 - 1)) + 1; const d2 = Math.floor(Math.random() * 8) + 2; const num2 = Math.floor(Math.random() * (d2 - 1)) + 1; n1 = num1 / d1; n2 = num2 / d2; disp1 = `${num1}/${d1}`; disp2 = `${num2}/${d2}`; }
+            const f1 = getFriendly(n1, type); const f2 = getFriendly(n2, type);
+            let actual, estimated; const opSym = { '+': '+', '-': '−', '*': '×', '/': '÷' }[op];
             if (op === '+') { actual = parseFloat(n1) + parseFloat(n2); estimated = f1 + f2; }
             if (op === '-') { actual = parseFloat(n1) - parseFloat(n2); estimated = f1 - f2; }
             if (op === '*') { actual = parseFloat(n1) * parseFloat(n2); estimated = f1 * f2; }
             if (op === '/') { actual = parseFloat(n1) / parseFloat(n2); estimated = f1 / f2; }
-
-            // UI Updates
             document.getElementById('problem').innerText = `${disp1} ${opSym} ${disp2}`;
             document.getElementById('think-step').innerText = `Think: ${f1} ${opSym} ${f2}`;
             document.getElementById('est-val').innerText = (estimated % 1 === 0) ? estimated : estimated.toFixed(2);
             document.getElementById('act-val').innerText = (actual % 1 === 0) ? actual : actual.toFixed(2);
         }
 
-        // Sequence Controller
         function handleStep() {
-            if (currentStep === 0) {
-                document.getElementById('think-step').classList.add('visible');
-                currentStep = 1;
-            } else if (currentStep === 1) {
-                document.getElementById('results').classList.add('visible');
-                currentStep = 2;
-            } else {
-                newProblem();
-            }
+            if (currentStep === 0) { document.getElementById('think-step').classList.add('visible'); currentStep = 1; }
+            else if (currentStep === 1) { document.getElementById('results').classList.add('visible'); currentStep = 2; }
+            else { newProblem(); }
         }
 
-        // Event Listeners
         document.getElementById('newChallengeBtn').addEventListener('click', newProblem);
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                handleStep();
-            }
-        });
-
-        // Initialize First Problem
         newProblem();
-		
-		/** * AAROHI MATH SUITE POWER-UP v3 (Final)
-		 * Features: Clean History (1 row/Q), Dynamic Sidebar Count, Tablet Button
-		 */
 
+		/** UNIVERSAL POWER-UP v3 (Rectified) **/
 		(function() {
 			const sidebar = document.getElementById('sidebar');
 			const card = document.getElementById('card');
-
-			// 1. Setup UI Elements
 			const counterDiv = document.createElement('div');
 			counterDiv.id = 'q-counter-display';
 			counterDiv.style = "font-size: 1.2rem; font-weight: bold; color: #888; margin-bottom: 10px; font-family: sans-serif;";
 			counterDiv.innerText = "Question: #1";
 			card.prepend(counterDiv);
-
 			const historyLink = document.createElement('a');
 			historyLink.id = 'history-link-main';
 			historyLink.style = "margin-top: auto; font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; cursor: pointer; display: block; padding-top: 20px;";
-			historyLink.innerText = "📜 View Session History (0)";
+			historyLink.innerText = "📜 History (0)";
 			sidebar.appendChild(historyLink);
-
 			const nextBtn = document.createElement('button');
-			nextBtn.style = "position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;";
+			nextBtn.style = "position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000;";
 			nextBtn.innerText = "Next Step ➔";
 			document.body.appendChild(nextBtn);
 
-			// 2. Logic & History Tracking
-			let qCount = 1;
-			let sessionHistory = [];
-			let currentProblemCache = "";
+			let qCount = 1; let sessionHistory = []; let currentProblemCache = "";
 
 			window.masterStep = function() {
 				const probEl = document.getElementById('problem') || document.getElementById('problem-text');
-				const ansEl = document.getElementById('answer');
-				
-				// State check using visibility
-				const isAnswerHidden = (window.getComputedStyle(ansEl).visibility === 'hidden' || !ansEl.classList.contains('visible'));
-
+				const ansEl = document.getElementById('results') || document.getElementById('answer'); // Dynamic Check
+				const isAnswerHidden = ansEl ? (window.getComputedStyle(ansEl).visibility === 'hidden' || !ansEl.classList.contains('visible')) : true;
 				if (isAnswerHidden) {
-					// STEP 1: Reveal Answer
-					currentProblemCache = probEl.innerText; // Capture question text
-					if (typeof handleStep === 'function') handleStep();
+					currentProblemCache = probEl.innerText;
+					handleStep();
 				} else {
-					// STEP 2: Save current result before moving to next question
-					sessionHistory.push({
-						no: qCount,
-						prob: currentProblemCache,
-						ans: ansEl.innerText
-					});
-					
-					// Update sidebar count immediately
-					historyLink.innerText = `📜 View Session History (${sessionHistory.length})`;
-
-					// Move to next question
-					if (typeof handleStep === 'function') handleStep();
-					qCount++;
-					counterDiv.innerText = `Question: #${qCount}`;
+					sessionHistory.push({ no: qCount, prob: currentProblemCache, ans: document.getElementById('act-val').innerText });
+					historyLink.innerText = `📜 History (${sessionHistory.length})`;
+					handleStep();
+					qCount++; counterDiv.innerText = `Question: #${qCount}`;
 				}
 			};
 
-			// 3. Bindings & Events
-			window.addEventListener('keydown', (e) => {
-				if (e.key === "ArrowDown") {
-					e.preventDefault();
-					window.masterStep();
-				}
-			}, true);
-
-			nextBtn.addEventListener('click', (e) => {
-				e.preventDefault();
-				window.masterStep();
-			});
-
-			historyLink.addEventListener('click', (e) => {
-				e.preventDefault();
-				if (sessionHistory.length === 0) return alert("No questions completed yet!");
-				
-				let report = `--- Session History (Total: ${sessionHistory.length}) ---\n\n`;
-				sessionHistory.forEach(item => {
-					report += `Q${item.no}: ${item.prob} = ${item.ans}\n`;
-				});
-				alert(report);
-			});
+			window.addEventListener('keydown', (e) => { if (e.key === "ArrowDown") { e.preventDefault(); window.masterStep(); } }, true);
+			nextBtn.addEventListener('click', (e) => { e.preventDefault(); window.masterStep(); });
+			historyLink.addEventListener('click', (e) => { e.preventDefault(); if (!sessionHistory.length) return; let r = ""; sessionHistory.forEach(i => r += `Q${i.no}: ${i.prob} = ${i.ans}\n`); alert(r); });
 		})();
 
-		(function() {
-			// 1. Create the Toggle Button
-			const toggleBtn = document.createElement('button');
-			toggleBtn.id = 'menu-toggle';
-			toggleBtn.innerHTML = '☰ Settings';
-			document.body.prepend(toggleBtn);
+        (function() {
+            const toggleBtn = document.createElement('button'); toggleBtn.id = 'menu-toggle'; toggleBtn.innerHTML = '☰ Settings'; document.body.prepend(toggleBtn);
+            toggleBtn.onclick = function(e) { e.stopPropagation(); document.getElementById('sidebar').classList.toggle('open'); toggleBtn.innerHTML = document.getElementById('sidebar').classList.contains('open') ? '✕ Close' : '☰ Settings'; };
+        })();
 
-			const sidebar = document.getElementById('sidebar');
+        /** * AAROHI MATH SUITE: IMMERSIVE FULL-SCREEN POWER-UP 
+         * Fixes: Overflowing answers, zooming issues, and adds Full-Screen toggle.
+         */
+        (function() {
+            // 1. Force the page to fit the viewport and disable accidental zooming
+            const meta = document.createElement('meta');
+            meta.name = "viewport";
+            meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+            document.getElementsByTagName('head')[0].appendChild(meta);
 
-			// 2. Toggle Sidebar Function
-			toggleBtn.onclick = function(e) {
-				e.stopPropagation();
-				sidebar.classList.toggle('open');
-				toggleBtn.innerHTML = sidebar.classList.contains('open') ? '✕ Close' : '☰ Settings';
-			};
+            // 2. Create the Full Screen Toggle Button
+            const fsBtn = document.createElement('button');
+            fsBtn.id = 'fs-toggle';
+            fsBtn.innerHTML = '⛶ Full Screen';
+            fsBtn.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
+            document.body.appendChild(fsBtn);
 
-			// 3. Close sidebar if user taps the main area (outside)
-			document.getElementById('main-area').onclick = function() {
-				if (sidebar.classList.contains('open')) {
-					sidebar.classList.remove('open');
-					toggleBtn.innerHTML = '☰ Settings';
-				}
-			};
-		})();
+            // 3. Full Screen Logic
+            fsBtn.onclick = function() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        alert(`Error attempting to enable full-screen mode: ${err.message}`);
+                    });
+                    fsBtn.innerHTML = '✕ Exit Full Screen';
+                } else {
+                    document.exitFullscreen();
+                    fsBtn.innerHTML = '⛶ Full Screen';
+                }
+            };
 
+            // 4. "Auto-Scale" Logic: Shrinks the card if it exceeds the screen height
+            function adjustScale() {
+                const card = document.getElementById('card');
+                const main = document.getElementById('main-area');
+                if (!card || !main) return;
+
+                // Reset scale to calculate true size
+                card.style.transform = 'scale(1)';
+                
+                const padding = 40; // Safety margin
+                const availableHeight = window.innerHeight - padding;
+                const cardHeight = card.offsetHeight;
+
+                if (cardHeight > availableHeight) {
+                    const scaleFactor = availableHeight / cardHeight;
+                    card.style.transform = `scale(${scaleFactor})`;
+                    card.style.transformOrigin = 'center center';
+                }
+            }
+
+            // Run on load and whenever the screen orientation changes
+            window.addEventListener('resize', adjustScale);
+            window.addEventListener('orientationchange', adjustScale);
+            setTimeout(adjustScale, 100); // Initial check
+        })();
     </script>
 </body>
 </html>

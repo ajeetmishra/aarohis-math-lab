@@ -5,6 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aarohi's Geometry & Robotics Lab</title>
     <style>
+
+		/* Ensure the main area never grows beyond the screen */
+		#main-area {
+			height: 100vh;
+			width: 100vw;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden; /* Prevents scrolling */
+			position: relative;
+		}
+
+		/* Make the card responsive rather than fixed height */
+		#card {
+			max-height: 85vh; /* Never more than 85% of screen height */
+			max-width: 90vw;  /* Never more than 90% of screen width */
+			height: auto;     /* Let content define height up to the max */
+			min-height: 300px;
+			padding: 20px;
+			box-sizing: border-box; /* Includes padding in height calculation */
+		}
+
+		/* Ensure the answer doesn't push elements off-screen */
+		#answer {
+			margin-top: 10px;
+			line-height: 1;
+		}
+
+
+		/* --- RESPONSIVE MOBILE-FIRST OVERRIDES --- */
+		@media (max-width: 768px) {
+			body {
+				flex-direction: column; /* Stack sidebar and main area */
+				overflow: auto;
+			}
+
+			#sidebar {
+				position: fixed;
+				left: -100%; /* Hide off-screen by default */
+				top: 0;
+				bottom: 0;
+				width: 80%; /* Take most of the screen when open */
+				transition: 0.3s ease;
+				z-index: 2000;
+				box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+			}
+
+			#sidebar.open {
+				left: 0; /* Slide in */
+			}
+
+			#main-area {
+				width: 100vw;
+				height: 100vh;
+				padding: 5px;
+				box-sizing: border-box;
+			}
+
+			#card {
+				width: 95%;
+				max-height: 85vh; /* Use max-height instead of fixed height */
+				height: auto; /* Allow content to determine height */
+				min-height: 70vh;
+				margin-top: 60px; /* Space for menu button */
+				padding: 15px; /* Reduce padding for more space */
+				box-sizing: border-box;
+				overflow-y: auto; /* Allow scrolling if needed */
+			}
+
+			#canvas-container {
+				height: 200px; /* Reduce canvas height on mobile */
+			}
+
+			/* Floating Toggle Button for Settings */
+			#menu-toggle {
+				display: block !important;
+				position: fixed;
+				top: 10px;
+				left: 10px;
+				z-index: 3000;
+				background: var(--accent-color);
+				color: white;
+				border: none;
+				padding: 8px 12px;
+				border-radius: 8px;
+				font-weight: bold;
+				font-size: 0.9rem;
+			}
+
+			/* Adjust text sizes for mobile - make them smaller to fit better */
+			#problem, #problem-text { font-size: 1.8rem !important; line-height: 1.2; margin: 10px 0; }
+			#logic-bridge { font-size: 1rem !important; padding: 8px 15px; margin: 8px 0; }
+			#answer { font-size: 1.8rem !important; margin: 10px 0; }
+			
+			/* Make next button more mobile-friendly */
+			#next-btn {
+				bottom: 15px !important;
+				right: 15px !important;
+				padding: 12px 20px !important;
+				font-size: 1rem !important;
+				border-radius: 25px !important;
+			}
+
+			/* Style the full screen button for mobile */
+			#fs-toggle {
+				top: 10px !important;
+				right: 10px !important;
+				padding: 8px 12px !important;
+				font-size: 0.8rem !important;
+			}
+		}
+
+		/* Hide toggle on desktop */
+		#menu-toggle { display: none; }
+
+
         :root {
             --bg-color: #f0fdfa; /* Minty freshness for geometry */
             --sidebar-bg: #ffffff;
@@ -343,6 +459,7 @@
 			sidebar.appendChild(historyLink);
 
 			const nextBtn = document.createElement('button');
+			nextBtn.id = 'next-btn';
 			nextBtn.style = "position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;";
 			nextBtn.innerText = "Next Step ➔";
 			document.body.appendChild(nextBtn);
@@ -430,6 +547,63 @@
 				}
 			};
 		})();
+
+/** * AAROHI MATH SUITE: IMMERSIVE FULL-SCREEN POWER-UP 
+ * Fixes: Overflowing answers, zooming issues, and adds Full-Screen toggle.
+ */
+
+(function() {
+    // 1. Force the page to fit the viewport and disable accidental zooming
+    const meta = document.createElement('meta');
+    meta.name = "viewport";
+    meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+    document.getElementsByTagName('head')[0].appendChild(meta);
+
+    // 2. Create the Full Screen Toggle Button
+    const fsBtn = document.createElement('button');
+    fsBtn.id = 'fs-toggle';
+    fsBtn.innerHTML = '⛶ Full Screen';
+    fsBtn.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
+    document.body.appendChild(fsBtn);
+
+    // 3. Full Screen Logic
+    fsBtn.onclick = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                alert(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+            fsBtn.innerHTML = '✕ Exit Full Screen';
+        } else {
+            document.exitFullscreen();
+            fsBtn.innerHTML = '⛶ Full Screen';
+        }
+    };
+
+    // 4. "Auto-Scale" Logic: Shrinks the card if it exceeds the screen height
+    function adjustScale() {
+        const card = document.getElementById('card');
+        const main = document.getElementById('main-area');
+        if (!card || !main) return;
+
+        // Reset scale to calculate true size
+        card.style.transform = 'scale(1)';
+        
+        const padding = 40; // Safety margin
+        const availableHeight = window.innerHeight - padding;
+        const cardHeight = card.offsetHeight;
+
+        if (cardHeight > availableHeight) {
+            const scaleFactor = availableHeight / cardHeight;
+            card.style.transform = `scale(${scaleFactor})`;
+            card.style.transformOrigin = 'center center';
+        }
+    }
+
+    // Run on load and whenever the screen orientation changes
+    window.addEventListener('resize', adjustScale);
+    window.addEventListener('orientationchange', adjustScale);
+    setTimeout(adjustScale, 100); // Initial check
+})();
 
     </script>
 	
