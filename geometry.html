@@ -405,6 +405,32 @@
 				alert(report);
 			});
 		})();
+
+		(function() {
+			// 1. Create the Toggle Button
+			const toggleBtn = document.createElement('button');
+			toggleBtn.id = 'menu-toggle';
+			toggleBtn.innerHTML = '☰ Settings';
+			document.body.prepend(toggleBtn);
+
+			const sidebar = document.getElementById('sidebar');
+
+			// 2. Toggle Sidebar Function
+			toggleBtn.onclick = function(e) {
+				e.stopPropagation();
+				sidebar.classList.toggle('open');
+				toggleBtn.innerHTML = sidebar.classList.contains('open') ? '✕ Close' : '☰ Settings';
+			};
+
+			// 3. Close sidebar if user taps the main area (outside)
+			document.getElementById('main-area').onclick = function() {
+				if (sidebar.classList.contains('open')) {
+					sidebar.classList.remove('open');
+					toggleBtn.innerHTML = '☰ Settings';
+				}
+			};
+		})();
+
     </script>
 	
 	

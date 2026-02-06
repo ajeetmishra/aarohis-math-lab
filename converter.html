@@ -5,6 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aarohi's Universal Converter</title>
     <style>
+
+		/* --- RESPONSIVE MOBILE-FIRST OVERRIDES --- */
+		@media (max-width: 768px) {
+			body {
+				flex-direction: column; /* Stack sidebar and main area */
+				overflow: auto;
+			}
+
+			#sidebar {
+				position: fixed;
+				left: -100%; /* Hide off-screen by default */
+				top: 0;
+				bottom: 0;
+				width: 80%; /* Take most of the screen when open */
+				transition: 0.3s ease;
+				z-index: 2000;
+				box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+			}
+
+			#sidebar.open {
+				left: 0; /* Slide in */
+			}
+
+			#main-area {
+				width: 100vw;
+				height: 100vh;
+				padding: 10px;
+			}
+
+			#card {
+				width: 95%;
+				height: 70vh; /* Scaled to screen height */
+				margin-top: 50px;
+			}
+
+			/* Floating Toggle Button for Settings */
+			#menu-toggle {
+				display: block !important;
+				position: fixed;
+				top: 15px;
+				left: 15px;
+				z-index: 3000;
+				background: var(--accent-color);
+				color: white;
+				border: none;
+				padding: 10px 15px;
+				border-radius: 8px;
+				font-weight: bold;
+			}
+
+			/* Adjust large text for small screens */
+			#problem, #problem-text { font-size: 3rem !important; }
+			#answer { font-size: 2.5rem !important; }
+		}
+
+		/* Hide toggle on desktop */
+		#menu-toggle { display: none; }
+
+
         :root {
             --bg-color: #fff5f8; /* Soft pink theme for tailoring/design */
             --sidebar-bg: #ffffff;
@@ -336,6 +395,30 @@
 			});
 		})();
 
+		(function() {
+			// 1. Create the Toggle Button
+			const toggleBtn = document.createElement('button');
+			toggleBtn.id = 'menu-toggle';
+			toggleBtn.innerHTML = '☰ Settings';
+			document.body.prepend(toggleBtn);
+
+			const sidebar = document.getElementById('sidebar');
+
+			// 2. Toggle Sidebar Function
+			toggleBtn.onclick = function(e) {
+				e.stopPropagation();
+				sidebar.classList.toggle('open');
+				toggleBtn.innerHTML = sidebar.classList.contains('open') ? '✕ Close' : '☰ Settings';
+			};
+
+			// 3. Close sidebar if user taps the main area (outside)
+			document.getElementById('main-area').onclick = function() {
+				if (sidebar.classList.contains('open')) {
+					sidebar.classList.remove('open');
+					toggleBtn.innerHTML = '☰ Settings';
+				}
+			};
+		})();
 
     </script>
 </body>
