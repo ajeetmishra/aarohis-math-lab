@@ -362,12 +362,7 @@
             generateProblem();
         }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                handleStep();
-            }
-        });
+        // Removed duplicate ArrowDown listener - handled by masterStep system below
 
         // Init
         generateProblem();
@@ -496,7 +491,7 @@
     // 1. Navigation Icons
     const navIcons = document.createElement('div');
     navIcons.id = 'nav-icons';
-    navIcons.style = "position: fixed; top: 15px; right: 170px; z-index: 4000; display: flex; gap: 10px;";
+    navIcons.style = "position: fixed; top: 15px; right: 350px; z-index: 4000; display: flex; gap: 10px;";
     
     const homeLink = document.createElement('a');
     homeLink.href = 'index.html';
@@ -513,6 +508,20 @@
     navIcons.appendChild(homeLink);
     navIcons.appendChild(aboutLink);
     document.body.appendChild(navIcons);
+
+    // 1.5. Donation Button
+    const donateBtn = document.createElement('div');
+    donateBtn.id = 'donate-btn';
+    donateBtn.style = "position: fixed; top: 15px; right: 220px; z-index: 4000;";
+    
+    const donateLink = document.createElement('a');
+    donateLink.href = 'donate.html';
+    donateLink.style = "display: block; padding: 10px 15px; background: rgba(255,165,0,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
+    donateLink.innerHTML = '☕ Donate ₹99';
+    donateLink.title = 'Support with a coffee';
+    
+    donateBtn.appendChild(donateLink);
+    document.body.appendChild(donateBtn);
 
     // 2. Create the Full Screen Toggle Button
     const fsBtn = document.createElement('button');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>About - Ishi's Math Lab</title>
+    <title>Support - Ishi's Math Lab</title>
     <style>
         /* Ensure the main area never grows beyond the screen */
         #main-area {
@@ -175,11 +175,11 @@
             display: flex;
             flex-direction: column;
             border: 10px solid white;
-            text-align: left;
+            text-align: center;
         }
 
         .content {
-            padding: 20px;
+            padding: 30px;
         }
 
         .content h1 {
@@ -195,19 +195,15 @@
             font-size: 2rem;
             font-weight: 700;
             margin: 30px 0 15px 0;
-        }
-
-        .content h3 {
-            color: var(--logic-color);
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin: 20px 0 10px 0;
+            text-align: center;
         }
 
         .content p {
             line-height: 1.6;
             margin: 15px 0;
             color: var(--text-main);
+            font-size: 1.1rem;
+            text-align: center;
         }
 
         .highlight {
@@ -216,35 +212,89 @@
             border-radius: 15px;
             border-left: 5px solid var(--logic-color);
             margin: 20px 0;
+            text-align: left;
         }
 
-        .lab-list {
-            background: #f8fafc;
+        .app-features {
+            text-align: left;
+            margin: 25px 0;
             padding: 20px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             border-radius: 15px;
-            margin: 20px 0;
+            border: 2px solid #0ea5e9;
         }
 
-        .lab-item {
+        .app-features ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .app-features li {
             margin: 12px 0;
-            padding: 10px 15px;
-            background: white;
-            border-radius: 10px;
-            border-left: 4px solid var(--accent-color);
             font-weight: 500;
+            color: var(--text-main);
+            font-size: 1.1rem;
         }
 
-        .lab-emoji {
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
-
-        .story-section {
+        .donation-section {
             background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
             padding: 25px;
             border-radius: 20px;
             margin: 20px 0;
             border: 2px solid #e9d5ff;
+        }
+
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .qr-code {
+            max-width: 250px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 3px solid #e9d5ff;
+        }
+
+        .upi-details {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .upi-id {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #d1d5db;
+        }
+
+        .coffee-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 15px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        .coffee-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -255,6 +305,7 @@
         
         <div class="section">
             <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="about.html" class="nav-link">ℹ️ About</a>
             <a href="fast_track.html" class="nav-link">⚡ Fast-Track Math</a>
             <a href="geometry.html" class="nav-link">📐 Robotics Compass</a>
             <a href="number_theory.html" class="nav-link">🔢 Number Hunter</a>
@@ -275,77 +326,50 @@
     <div id="main-area">
         <div id="card">
             <div class="content">
-                <h1>🚀 About Ishi's Math Lab</h1>
+                <h1>☕ Support Ishi's Math Lab</h1>
                 
-                <div class="story-section">
-                    <h2>✨ The Origin Story</h2>
-                    <p>Meet <strong>Ishi</strong>, a curious 10-year-old with a passion for discovery that knows no bounds. While her friends might be content with simple games, Ishi's mind buzzes with questions that go far beyond the ordinary.</p>
-                    
-                    <div class="highlight">
-                        <h3>🤖 The Robotics Explorer</h3>
-                        <p>Ishi's journey began in a robotics workshop where she discovered that math isn't just numbers on a page—it's the language that makes robots move! When programming servo motors to turn at precise angles, she realized that 90° isn't just a number; it's a quarter turn that makes her robot arm reach exactly where she wants it to go.</p>
-                    </div>
+                <p>Help us keep this educational platform <strong>free</strong> and <strong>accessible</strong> for all young mathematicians!</p>
 
-                    <div class="highlight">
-                        <h3>🧵 The Creative Tailor</h3>
-                        <p>Her curiosity didn't stop there. Ishi found herself drawn to her grandmother's sewing machine, where she learned that designing clothes is really about understanding proportions, measurements, and conversions. A 25% reduction in pattern size? That's 3/4 of the original—and suddenly fractions became her tools for creation!</p>
-                    </div>
-
-                    <div class="highlight">
-                        <h3>🏆 The Math Olympiad Challenger</h3>
-                        <p>But Ishi's biggest revelation came when she discovered that the "tricks" she was learning in robotics and tailoring were actually the secret weapons of math competition champions. The friendly numbers, the mental shortcuts, the pattern recognition—these weren't separate subjects, they were all part of building true <strong>Number Sense</strong>.</p>
-                    </div>
-
-                    <p>This is the philosophy behind <strong>Ishi's Math Lab</strong>: transforming mathematics from rote memorization into intuitive understanding, one discovery at a time.</p>
+                <div class="app-features">
+                    <h2 style="margin-top: 0; font-size: 1.5rem;">🌟 What You're Supporting:</h2>
+                    <ul>
+                        <li><strong>🚀 Continuous Innovation & Growth</strong> - We're passionate about evolving this platform with new math topics, enhanced features, and community-driven improvements. Your support directly fuels this development, though we're equally grateful whether you contribute or simply share our mission of making mathematics joyful and accessible for every child.</li>
+                        <li><strong>🎓 Seven Interactive Math Labs</strong> - From fractions to robotics, covering essential math skills through play-based learning</li>
+                        <li><strong>🧠 Revolutionary "Down Arrow" Method</strong> - Building mathematical intuition instead of rote memorization</li>
+                        <li><strong>📱 Mobile-Responsive Design</strong> - Works seamlessly on tablets, phones, and computers for learning anywhere</li>
+                        <li><strong>🔓 Completely Free & Open Source</strong> - No ads, no tracking, no premium features - just pure educational content</li>
+                    </ul>
                 </div>
 
-                <h2>🔬 The Labs</h2>
-                <p>Each lab in this suite is designed to build a specific aspect of mathematical intuition, inspired by Ishi's real-world adventures:</p>
-
-                <div class="lab-list">
-                    <div class="lab-item">
-                        <span class="lab-emoji">⚡</span><strong>Fast-Track Math:</strong> Instant translation between percentages, fractions, and decimals using "friendly numbers" that make mental math effortless.
-                    </div>
-                    <div class="lab-item">
-                        <span class="lab-emoji">📐</span><strong>Robotics Compass:</strong> Visualizing angles as "servo movements" and exploring the fascinating Perimeter-Area Paradox through geometric discovery.
-                    </div>
-                    <div class="lab-item">
-                        <span class="lab-emoji">🔢</span><strong>Number Hunter:</strong> Mastering the fundamental "atoms" of mathematics—Prime numbers, Factors, HCF, and LCM through interactive exploration.
-                    </div>
-                    <div class="lab-item">
-                        <span class="lab-emoji">🧠</span><strong>Estimation Station:</strong> Training the brain to find "friendly numbers" for lightning-fast approximations and mental calculations.
-                    </div>
-                    <div class="lab-item">
-                        <span class="lab-emoji">🍕</span><strong>Fraction Lab:</strong> A completely visual approach to the four core operations of fractions, making abstract concepts concrete.
-                    </div>
-                    <div class="lab-item">
-                        <span class="lab-emoji">🧵</span><strong>Tailor's Measure:</strong> Connecting mathematics to real-world design through practical unit and currency conversions.
-                    </div>
-                    <div class="lab-item">
-                        <span class="lab-emoji">✖️</span><strong>Multiplication Pro:</strong> Mastering tables, squares, and cubes with emphasis on pattern recognition and "instant recall" techniques.
-                    </div>
+                <div class="donation-section">
+                    <h2>💝 Support Our Mission</h2>
+                    <p>Your donation helps us maintain hosting, develop new features, and keep Ishi's Math Lab free for everyone. Every coffee helps fuel our passion for making mathematics accessible and enjoyable!</p>
                 </div>
 
-                <h2>🎯 The "Down Arrow" Philosophy</h2>
+                <div class="qr-container">
+                    <img src="qr_huf.png" alt="UPI QR Code for Donation" class="qr-code">
+                </div>
+
+                <div class="upi-details">
+                    <h2 style="margin-top: 0; font-size: 1.3rem;">💳 UPI Payment Details</h2>
+                    <p><strong>UPI ID:</strong></p>
+                    <div class="upi-id">ajeetmishra-4@okhdfcbank</div>
+                    <p>Scan the QR code above or use the UPI ID directly in any UPI app</p>
+                </div>
+
+                <div style="text-align: center; margin: 25px 0;">
+                    <a href="upi://pay?pa=ajeetmishra-4@okhdfcbank&pn=DonateCoffee&am=99" class="coffee-btn">
+                        ☕ Buy Us a Coffee - ₹99
+                    </a>
+                    <a href="upi://pay?pa=ajeetmishra-4@okhdfcbank&pn=DonateCoffee&am=199" class="coffee-btn">
+                        🍰 Support Development - ₹199
+                    </a>
+                </div>
+
                 <div class="highlight">
-                    <p>Unlike traditional quizzes that simply mark answers as "Right" or "Wrong," Ishi's Math Lab uses a revolutionary <strong>Three-Step Reveal</strong> process:</p>
-                    
-                    <h3>1. 🤔 The Challenge</h3>
-                    <p>A problem is presented that makes you think (e.g., "What's 99 × 11?")</p>
-                    
-                    <h3>2. 💡 The "Think" Bridge</h3>
-                    <p>A logic hint appears to guide your mental process (e.g., "Think: 100 × 10 and adjust")</p>
-                    
-                    <h3>3. ✨ The Result</h3>
-                    <p>The actual answer is revealed alongside your estimate, building both accuracy and confidence.</p>
-                </div>
-
-                <p>This approach builds mental scaffolding that transforms students from formula-followers into mathematical thinkers, ready to tackle everything from classroom problems to Olympiad challenges.</p>
-
-                <div class="story-section">
-                    <p style="text-align: center; font-style: italic; font-size: 1.1rem; margin: 0;">
-                        <strong>"Mathematics isn't about memorizing formulas—it's about discovering patterns, building intuition, and developing the confidence to explore the unknown."</strong><br>
-                        <span style="color: var(--logic-color);">— Inspired by Ishi's Journey</span>
+                    <p style="margin: 0; text-align: center; font-style: italic;">
+                        <strong>"Every small contribution helps us continue building tools that transform how children learn mathematics. Thank you for believing in our mission!"</strong><br>
+                        <span style="color: var(--logic-color);">— The Ishi's Math Lab Team</span>
                     </p>
                 </div>
             </div>
@@ -353,34 +377,11 @@
     </div>
 
     <script>
-        // Mobile menu toggle functionality
-        (function() {
-            const toggleBtn = document.createElement('button');
-            toggleBtn.id = 'menu-toggle';
-            toggleBtn.innerHTML = '☰ Menu';
-            document.body.prepend(toggleBtn);
-
-            const sidebar = document.getElementById('sidebar');
-
-            toggleBtn.onclick = function(e) {
-                e.stopPropagation();
-                sidebar.classList.toggle('open');
-                toggleBtn.innerHTML = sidebar.classList.contains('open') ? '✕ Close' : '☰ Menu';
-            };
-
-            document.getElementById('main-area').onclick = function() {
-                if (sidebar.classList.contains('open')) {
-                    sidebar.classList.remove('open');
-                    toggleBtn.innerHTML = '☰ Menu';
-                }
-            };
-        })();
-
         // Navigation icons
         (function() {
             const navIcons = document.createElement('div');
             navIcons.id = 'nav-icons';
-            navIcons.style = "position: fixed; top: 15px; right: 350px; z-index: 4000; display: flex; gap: 10px;";
+            navIcons.style = "position: fixed; top: 15px; right: 270px; z-index: 4000; display: flex; gap: 10px;";
             
             const homeLink = document.createElement('a');
             homeLink.href = 'index.html';
@@ -388,24 +389,15 @@
             homeLink.innerHTML = '🏠 Home';
             homeLink.title = 'Home';
             
+            const aboutLink = document.createElement('a');
+            aboutLink.href = 'about.html';
+            aboutLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
+            aboutLink.innerHTML = 'ℹ️ About';
+            aboutLink.title = 'About';
+            
             navIcons.appendChild(homeLink);
+            navIcons.appendChild(aboutLink);
             document.body.appendChild(navIcons);
-        })();
-
-        // Donation button
-        (function() {
-            const donateBtn = document.createElement('div');
-            donateBtn.id = 'donate-btn';
-            donateBtn.style = "position: fixed; top: 15px; right: 220px; z-index: 4000;";
-            
-            const donateLink = document.createElement('a');
-            donateLink.href = 'donate.html';
-            donateLink.style = "display: block; padding: 10px 15px; background: rgba(255,165,0,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
-            donateLink.innerHTML = '☕ Donate ₹99';
-            donateLink.title = 'Support with a coffee';
-            
-            donateBtn.appendChild(donateLink);
-            document.body.appendChild(donateBtn);
         })();
 
         // Full screen toggle functionality
@@ -425,6 +417,29 @@
                 } else {
                     document.exitFullscreen();
                     fsBtn.innerHTML = '⛶ Full Screen';
+                }
+            };
+        })();
+
+        // Mobile menu toggle functionality
+        (function() {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.id = 'menu-toggle';
+            toggleBtn.innerHTML = '☰ Menu';
+            document.body.prepend(toggleBtn);
+
+            const sidebar = document.getElementById('sidebar');
+
+            toggleBtn.onclick = function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+                toggleBtn.innerHTML = sidebar.classList.contains('open') ? '✕ Close' : '☰ Menu';
+            };
+
+            document.getElementById('main-area').onclick = function() {
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    toggleBtn.innerHTML = '☰ Menu';
                 }
             };
         })();
