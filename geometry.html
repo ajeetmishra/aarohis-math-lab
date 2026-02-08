@@ -559,7 +559,28 @@
     meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
     document.getElementsByTagName('head')[0].appendChild(meta);
 
-    // 2. Create the Full Screen Toggle Button
+    // 2. Navigation Icons
+    const navIcons = document.createElement('div');
+    navIcons.id = 'nav-icons';
+    navIcons.style = "position: fixed; top: 15px; right: 170px; z-index: 4000; display: flex; gap: 10px;";
+    
+    const homeLink = document.createElement('a');
+    homeLink.href = 'index.html';
+    homeLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
+    homeLink.innerHTML = '🏠 Home';
+    homeLink.title = 'Home';
+    
+    const aboutLink = document.createElement('a');
+    aboutLink.href = 'about.html';
+    aboutLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
+    aboutLink.innerHTML = 'ℹ️ About';
+    aboutLink.title = 'About';
+    
+    navIcons.appendChild(homeLink);
+    navIcons.appendChild(aboutLink);
+    document.body.appendChild(navIcons);
+
+    // 3. Create the Full Screen Toggle Button
     const fsBtn = document.createElement('button');
     fsBtn.id = 'fs-toggle';
     fsBtn.innerHTML = '⛶ Full Screen';
