@@ -314,12 +314,7 @@
             }
         }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                handleStep();
-            }
-        });
+        // Removed duplicate ArrowDown listener - handled by masterStep system below
 
         // Initialize on load
         newProblem();
