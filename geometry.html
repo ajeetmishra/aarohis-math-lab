@@ -115,10 +115,33 @@
 				padding: 8px 12px !important;
 				font-size: 0.8rem !important;
 			}
+
+			/* Mobile responsive text */
+			.desktop-text { display: none !important; }
+			.mobile-text { display: inline !important; }
+
+			/* Mobile navigation - all buttons in one horizontal row */
+			#nav-icons {
+				right: 15px !important;
+				top: 15px !important;
+				flex-direction: row !important;
+				flex-wrap: wrap !important;
+				gap: 5px !important;
+			}
+
+			/* Smaller padding and font size for mobile buttons */
+			#nav-icons a, #nav-icons button {
+				padding: 8px 10px !important;
+				font-size: 0.8rem !important;
+			}
 		}
 
 		/* Hide toggle on desktop */
 		#menu-toggle { display: none; }
+
+		/* Desktop responsive text - hide mobile text by default */
+		.mobile-text { display: none; }
+		.desktop-text { display: inline; }
 
 
         :root {
@@ -557,47 +580,41 @@
     meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
     document.getElementsByTagName('head')[0].appendChild(meta);
 
-    // 2. Navigation Icons
+    // 1. Navigation Icons and Buttons Container
     const navIcons = document.createElement('div');
     navIcons.id = 'nav-icons';
     navIcons.style = "position: fixed; top: 15px; right: 350px; z-index: 4000; display: flex; gap: 10px;";
-    
+
     const homeLink = document.createElement('a');
     homeLink.href = 'index.html';
     homeLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
     homeLink.innerHTML = '🏠 Home';
     homeLink.title = 'Home';
-    
+
     const aboutLink = document.createElement('a');
     aboutLink.href = 'about.html';
     aboutLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
     aboutLink.innerHTML = 'ℹ️ About';
     aboutLink.title = 'About';
-    
-    navIcons.appendChild(homeLink);
-    navIcons.appendChild(aboutLink);
-    document.body.appendChild(navIcons);
 
-    // 2.5. Donation Button
-    const donateBtn = document.createElement('div');
-    donateBtn.id = 'donate-btn';
-    donateBtn.style = "position: fixed; top: 15px; right: 220px; z-index: 4000;";
-    
+    // Create donate button within nav container
     const donateLink = document.createElement('a');
     donateLink.href = 'donate.html';
     donateLink.style = "display: block; padding: 10px 15px; background: rgba(255,165,0,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
-    donateLink.innerHTML = '☕ Donate ₹99';
+    donateLink.innerHTML = '<span class="desktop-text">☕ Donate ₹99</span><span class="mobile-text">☕₹99</span>';
     donateLink.title = 'Support with a coffee';
-    
-    donateBtn.appendChild(donateLink);
-    document.body.appendChild(donateBtn);
 
-    // 3. Create the Full Screen Toggle Button
+    // Create fullscreen button within nav container
     const fsBtn = document.createElement('button');
     fsBtn.id = 'fs-toggle';
-    fsBtn.innerHTML = '⛶ Full Screen';
-    fsBtn.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
-    document.body.appendChild(fsBtn);
+    fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
+    fsBtn.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
+
+    navIcons.appendChild(homeLink);
+    navIcons.appendChild(aboutLink);
+    navIcons.appendChild(donateLink);
+    navIcons.appendChild(fsBtn);
+    document.body.appendChild(navIcons);
 
     // 3. Full Screen Logic
     fsBtn.onclick = function() {
@@ -605,10 +622,10 @@
             document.documentElement.requestFullscreen().catch(err => {
                 alert(`Error attempting to enable full-screen mode: ${err.message}`);
             });
-            fsBtn.innerHTML = '✕ Exit Full Screen';
+            fsBtn.innerHTML = '<span class="desktop-text">✕ Exit Full Screen</span><span class="mobile-text">✕</span>';
         } else {
             document.exitFullscreen();
-            fsBtn.innerHTML = '⛶ Full Screen';
+            fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
         }
     };
 

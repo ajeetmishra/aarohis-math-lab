@@ -112,7 +112,9 @@
             font-weight: 800; 
         }
 
-        .fraction { display: inline-flex; flex-direction: column; align-items: center; }
+        .fraction { display: inline-flex; align-items: center; gap: 8px; }
+        .fraction-part { display: inline-flex; flex-direction: column; align-items: center; }
+        .whole { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 800; }
         .numerator { border-bottom: clamp(4px, 1vw, 8px) solid var(--text-main); padding: 0 10px; }
         .operator { color: var(--accent-color); }
         
@@ -195,9 +197,32 @@
                 padding: 8px 12px !important;
                 font-size: 0.8rem !important;
             }
+
+            /* Mobile responsive text */
+            .desktop-text { display: none !important; }
+            .mobile-text { display: inline !important; }
+
+            /* Mobile navigation - all buttons in one horizontal row */
+            #nav-icons {
+                right: 15px !important;
+                top: 15px !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 5px !important;
+            }
+
+            /* Smaller padding and font size for mobile buttons */
+            #nav-icons a, #nav-icons button {
+                padding: 8px 10px !important;
+                font-size: 0.8rem !important;
+            }
         }
         
         #menu-toggle { display: none; }
+
+        /* Desktop responsive text - hide mobile text by default */
+        .mobile-text { display: none; }
+        .desktop-text { display: inline; }
     </style>
 </head>
 <body>
@@ -211,6 +236,21 @@
             <label><input type="radio" name="range" value="25"> Up to 25</label>
         </div>
 
+        <div class="section">
+            <span class="label-title">Operation</span>
+            <select id="operation-select" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;">
+                <option value="add">Addition (+)</option>
+                <option value="subtract">Subtraction (−)</option>
+                <option value="multiply">Multiplication (×)</option>
+                <option value="divide">Division (÷)</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <span class="label-title">Question Format</span>
+            <label><input type="checkbox" id="mixed-fractions"> Mixed-fractions</label>
+        </div>
+
         <button onclick="newProblem()">New Challenge</button>
         
         <div style="margin-top: auto; font-size: 0.8rem; color: #64748b;">
@@ -221,12 +261,30 @@
 
     <div id="main-area">
         <div id="card">
-            <div class="fraction"><div class="numerator" id="n1">1</div><div id="d1">2</div></div>
+            <div class="fraction" id="frac1">
+                <span class="whole" id="w1" style="display: none;"></span>
+                <div class="fraction-part">
+                    <div class="numerator" id="n1">1</div>
+                    <div id="d1">2</div>
+                </div>
+            </div>
             <div class="operator" id="op-display">+</div>
-            <div class="fraction"><div class="numerator" id="n2">1</div><div id="d2">4</div></div>
+            <div class="fraction" id="frac2">
+                <span class="whole" id="w2" style="display: none;"></span>
+                <div class="fraction-part">
+                    <div class="numerator" id="n2">1</div>
+                    <div id="d2">4</div>
+                </div>
+            </div>
             <div id="answer-container">
                 <div class="equals">=</div>
-                <div class="fraction" id="ans-fraction"><div class="numerator" id="an">3</div><div id="ad">4</div></div>
+                <div class="fraction" id="ans-fraction">
+                    <span class="whole" id="aw" style="display: none;"></span>
+                    <div class="fraction-part">
+                        <div class="numerator" id="an">3</div>
+                        <div id="ad">4</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -235,19 +293,102 @@
         let answerShown = false;
         function gcd(a, b) { return b ? gcd(b, a % b) : a; }
         function simplify(num, den) { const common = Math.abs(gcd(num, den)); return [num / common, den / common]; }
+        
+        function toMixedNumber(num, den) {
+            const whole = Math.floor(num / den);
+            const remainder = num % den;
+            return { whole, numerator: remainder, denominator: den };
+        }
+        
+        function displayFraction(wholeId, numId, denId, num, den, isMixed) {
+            const wholeEl = document.getElementById(wholeId);
+            const numEl = document.getElementById(numId);
+            const denEl = document.getElementById(denId);
+            
+            if (isMixed && num >= den) {
+                const mixed = toMixedNumber(num, den);
+                if (mixed.whole > 0) {
+                    wholeEl.textContent = mixed.whole;
+                    wholeEl.style.display = 'inline';
+                    
+                    if (mixed.numerator > 0) {
+                        numEl.textContent = mixed.numerator;
+                        denEl.textContent = mixed.denominator;
+                        numEl.parentElement.style.display = 'inline-flex';
+                    } else {
+                        numEl.parentElement.style.display = 'none';
+                    }
+                } else {
+                    wholeEl.style.display = 'none';
+                    numEl.textContent = num;
+                    denEl.textContent = den;
+                    numEl.parentElement.style.display = 'inline-flex';
+                }
+            } else {
+                wholeEl.style.display = 'none';
+                numEl.textContent = num;
+                denEl.textContent = den;
+                numEl.parentElement.style.display = 'inline-flex';
+            }
+        }
 
         function newProblem() {
             const range = parseInt(document.querySelector('input[name="range"]:checked').value);
+            const useMixed = document.getElementById('mixed-fractions').checked;
+            const operation = document.getElementById('operation-select').value;
+            
             let n1 = Math.floor(Math.random() * range) + 1; let d1 = Math.floor(Math.random() * range) + 1;
             let n2 = Math.floor(Math.random() * range) + 1; let d2 = Math.floor(Math.random() * range) + 1;
             
-            // Basic Addition logic for demo
-            let resN = (n1 * d2) + (n2 * d1); let resD = d1 * d2;
+            // Generate improper fractions for mixed number display
+            if (useMixed) {
+                n1 = Math.floor(Math.random() * range * 2) + range; // Ensure improper fractions
+                n2 = Math.floor(Math.random() * range * 2) + range;
+            }
+            
+            // Calculate result based on operation
+            let resN, resD, operatorSymbol;
+            
+            switch(operation) {
+                case 'add':
+                    resN = (n1 * d2) + (n2 * d1);
+                    resD = d1 * d2;
+                    operatorSymbol = '+';
+                    break;
+                case 'subtract':
+                    resN = (n1 * d2) - (n2 * d1);
+                    resD = d1 * d2;
+                    operatorSymbol = '−';
+                    // Ensure positive result by swapping if needed
+                    if (resN < 0) {
+                        [n1, d1, n2, d2] = [n2, d2, n1, d1];
+                        resN = (n1 * d2) - (n2 * d1);
+                    }
+                    break;
+                case 'multiply':
+                    resN = n1 * n2;
+                    resD = d1 * d2;
+                    operatorSymbol = '×';
+                    break;
+                case 'divide':
+                    resN = n1 * d2;
+                    resD = d1 * n2;
+                    operatorSymbol = '÷';
+                    break;
+                default:
+                    resN = (n1 * d2) + (n2 * d1);
+                    resD = d1 * d2;
+                    operatorSymbol = '+';
+            }
+            
             const [finalN, finalD] = simplify(resN, resD);
+            
+            // Update operator display
+            document.getElementById('op-display').textContent = operatorSymbol;
 
-            document.getElementById('n1').innerText = n1; document.getElementById('d1').innerText = d1;
-            document.getElementById('n2').innerText = n2; document.getElementById('d2').innerText = d2;
-            document.getElementById('an').innerText = finalN; document.getElementById('ad').innerText = finalD;
+            displayFraction('w1', 'n1', 'd1', n1, d1, useMixed);
+            displayFraction('w2', 'n2', 'd2', n2, d2, useMixed);
+            displayFraction('aw', 'an', 'ad', finalN, finalD, useMixed);
             
             document.getElementById('answer-container').classList.remove('visible');
             answerShown = false;
@@ -325,47 +466,41 @@
             meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
             document.getElementsByTagName('head')[0].appendChild(meta);
 
-            // 1. Navigation Icons
+            // 1. Navigation Icons and Buttons Container
             const navIcons = document.createElement('div');
             navIcons.id = 'nav-icons';
             navIcons.style = "position: fixed; top: 15px; right: 350px; z-index: 4000; display: flex; gap: 10px;";
-            
+
             const homeLink = document.createElement('a');
             homeLink.href = 'index.html';
             homeLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
             homeLink.innerHTML = '🏠 Home';
             homeLink.title = 'Home';
-            
+
             const aboutLink = document.createElement('a');
             aboutLink.href = 'about.html';
             aboutLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
             aboutLink.innerHTML = 'ℹ️ About';
             aboutLink.title = 'About';
-            
-            navIcons.appendChild(homeLink);
-            navIcons.appendChild(aboutLink);
-            document.body.appendChild(navIcons);
 
-            // 1.5. Donation Button
-            const donateBtn = document.createElement('div');
-            donateBtn.id = 'donate-btn';
-            donateBtn.style = "position: fixed; top: 15px; right: 220px; z-index: 4000;";
-            
+            // Create donate button within nav container
             const donateLink = document.createElement('a');
             donateLink.href = 'donate.html';
             donateLink.style = "display: block; padding: 10px 15px; background: rgba(255,165,0,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
-            donateLink.innerHTML = '☕ Donate ₹99';
+            donateLink.innerHTML = '<span class="desktop-text">☕ Donate ₹99</span><span class="mobile-text">☕₹99</span>';
             donateLink.title = 'Support with a coffee';
-            
-            donateBtn.appendChild(donateLink);
-            document.body.appendChild(donateBtn);
 
-            // 2. Create the Full Screen Toggle Button
+            // Create fullscreen button within nav container
             const fsBtn = document.createElement('button');
             fsBtn.id = 'fs-toggle';
-            fsBtn.innerHTML = '⛶ Full Screen';
-            fsBtn.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
-            document.body.appendChild(fsBtn);
+            fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
+            fsBtn.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
+
+            navIcons.appendChild(homeLink);
+            navIcons.appendChild(aboutLink);
+            navIcons.appendChild(donateLink);
+            navIcons.appendChild(fsBtn);
+            document.body.appendChild(navIcons);
 
             // 3. Full Screen Logic
             fsBtn.onclick = function() {
@@ -373,10 +508,10 @@
                     document.documentElement.requestFullscreen().catch(err => {
                         alert(`Error attempting to enable full-screen mode: ${err.message}`);
                     });
-                    fsBtn.innerHTML = '✕ Exit Full Screen';
+                    fsBtn.innerHTML = '<span class="desktop-text">✕ Exit Full Screen</span><span class="mobile-text">✕</span>';
                 } else {
                     document.exitFullscreen();
-                    fsBtn.innerHTML = '⛶ Full Screen';
+                    fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
                 }
             };
 
