@@ -75,8 +75,33 @@
                 font-weight: bold;
             }
 
+            /* Mobile navigation - all buttons in one horizontal row */
+            #nav-icons {
+                right: 15px !important;
+                top: 15px !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 5px !important;
+            }
+
+            /* Smaller padding and font size for mobile buttons */
+            #nav-icons a, #nav-icons button {
+                padding: 8px 10px !important;
+                font-size: 0.8rem !important;
+            }
+
             .content h1 { font-size: 2rem !important; }
             .content h2 { font-size: 1.5rem !important; }
+        }
+
+        /* Desktop responsive text - hide mobile text by default */
+        .mobile-text { display: none; }
+        .desktop-text { display: inline; }
+
+        /* Mobile responsive text */
+        @media (max-width: 768px) {
+            .desktop-text { display: none !important; }
+            .mobile-text { display: inline !important; }
         }
 
         /* Hide toggle on desktop */
@@ -376,55 +401,47 @@
             };
         })();
 
-        // Navigation icons
+        // Unified navigation container (following fractions.html pattern)
         (function() {
+            // 1. Navigation Icons and Buttons Container
             const navIcons = document.createElement('div');
             navIcons.id = 'nav-icons';
             navIcons.style = "position: fixed; top: 15px; right: 350px; z-index: 4000; display: flex; gap: 10px;";
-            
+
             const homeLink = document.createElement('a');
             homeLink.href = 'index.html';
             homeLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
             homeLink.innerHTML = '🏠 Home';
             homeLink.title = 'Home';
-            
-            navIcons.appendChild(homeLink);
-            document.body.appendChild(navIcons);
-        })();
 
-        // Donation button
-        (function() {
-            const donateBtn = document.createElement('div');
-            donateBtn.id = 'donate-btn';
-            donateBtn.style = "position: fixed; top: 15px; right: 220px; z-index: 4000;";
-            
+            // Create donate button within nav container
             const donateLink = document.createElement('a');
             donateLink.href = 'donate.html';
             donateLink.style = "display: block; padding: 10px 15px; background: rgba(255,165,0,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
-            donateLink.innerHTML = '☕ Donate ₹99';
+            donateLink.innerHTML = '<span class="desktop-text">☕ Donate ₹99</span><span class="mobile-text">☕₹99</span>';
             donateLink.title = 'Support with a coffee';
-            
-            donateBtn.appendChild(donateLink);
-            document.body.appendChild(donateBtn);
-        })();
 
-        // Full screen toggle functionality
-        (function() {
+            // Create fullscreen button within nav container
             const fsBtn = document.createElement('button');
             fsBtn.id = 'fs-toggle';
-            fsBtn.innerHTML = '⛶ Full Screen';
-            fsBtn.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
-            document.body.appendChild(fsBtn);
+            fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
+            fsBtn.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
 
+            navIcons.appendChild(homeLink);
+            navIcons.appendChild(donateLink);
+            navIcons.appendChild(fsBtn);
+            document.body.appendChild(navIcons);
+
+            // 3. Full Screen Logic
             fsBtn.onclick = function() {
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(err => {
                         alert(`Error attempting to enable full-screen mode: ${err.message}`);
                     });
-                    fsBtn.innerHTML = '✕ Exit Full Screen';
+                    fsBtn.innerHTML = '<span class="desktop-text">✕ Exit Full Screen</span><span class="mobile-text">✕</span>';
                 } else {
                     document.exitFullscreen();
-                    fsBtn.innerHTML = '⛶ Full Screen';
+                    fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
                 }
             };
         })();
