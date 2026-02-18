@@ -111,6 +111,13 @@
 		/* Hide toggle on desktop */
 		#menu-toggle { display: none; }
 
+		/* Hide navigation button text on very small screens */
+		@media (max-width: 480px) {
+			.nav-text {
+				display: none !important;
+			}
+		}
+
 		/* Desktop responsive text - hide mobile text by default */
 		.mobile-text { display: none; }
 		.desktop-text { display: inline; }
@@ -518,18 +525,18 @@
     // 1. Navigation Icons and Buttons Container
     const navIcons = document.createElement('div');
     navIcons.id = 'nav-icons';
-    navIcons.style = "position: fixed; top: 15px; right: 350px; z-index: 4000; display: flex; gap: 10px;";
+    navIcons.style = "position: fixed; top: 15px; right: 250px; z-index: 4000; display: flex; gap: 10px;";
 
     const homeLink = document.createElement('a');
     homeLink.href = 'index.html';
     homeLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
-    homeLink.innerHTML = '🏠 Home';
+    homeLink.innerHTML = '🏠<span class="nav-text"> Home</span>';
     homeLink.title = 'Home';
 
     const aboutLink = document.createElement('a');
     aboutLink.href = 'about.html';
     aboutLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
-    aboutLink.innerHTML = 'ℹ️ About';
+    aboutLink.innerHTML = 'ℹ️<span class="nav-text"> About</span>';
     aboutLink.title = 'About';
 
     // Create donate button within nav container
@@ -538,6 +545,13 @@
     donateLink.style = "display: block; padding: 10px 15px; background: rgba(255,165,0,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
     donateLink.innerHTML = '<span class="desktop-text">☕ Donate ₹99</span><span class="mobile-text">☕₹99</span>';
     donateLink.title = 'Support with a coffee';
+
+    // Create USD donate button within nav container
+    const donateUsdLink = document.createElement('a');
+    donateUsdLink.href = 'donate_usd.html';
+    donateUsdLink.style = "display: block; padding: 10px 15px; background: rgba(34,197,94,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
+    donateUsdLink.innerHTML = '<span class="desktop-text">💵 Donate USD</span><span class="mobile-text">$USD</span>';
+    donateUsdLink.title = 'International support';
 
     // Create fullscreen button within nav container
     const fsBtn = document.createElement('button');
@@ -548,6 +562,7 @@
     navIcons.appendChild(homeLink);
     navIcons.appendChild(aboutLink);
     navIcons.appendChild(donateLink);
+    navIcons.appendChild(donateUsdLink);
     navIcons.appendChild(fsBtn);
     document.body.appendChild(navIcons);
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Support - Ishi's Math Lab</title>
+    <title>International Support - Ishi's Math Lab</title>
     <style>
         /* Ensure the main area never grows beyond the screen */
         #main-area {
@@ -27,7 +27,6 @@
             overflow-y: auto;
         }
 
-        /* Responsive mobile-first overrides */
         /* Hide navigation button text on very small screens */
         @media (max-width: 480px) {
             .nav-text {
@@ -35,6 +34,7 @@
             }
         }
 
+        /* Responsive mobile-first overrides */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -251,38 +251,12 @@
             border: 2px solid #e9d5ff;
         }
 
-        .qr-container {
-            display: flex;
-            justify-content: center;
-            margin: 25px 0;
-        }
-
-        .qr-code {
-            max-width: 250px;
-            height: auto;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 3px solid #e9d5ff;
-        }
-
-        .upi-details {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 15px;
+        .stripe-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 25px;
+            border-radius: 20px;
             margin: 20px 0;
-            border: 2px solid #e2e8f0;
-        }
-
-        .upi-id {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--accent-color);
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border: 1px solid #d1d5db;
+            border: 2px solid #0ea5e9;
         }
 
         .coffee-btn {
@@ -333,7 +307,7 @@
     <div id="main-area">
         <div id="card">
             <div class="content">
-                <h1>☕ Support Ishi's Math Lab</h1>
+                <h1>🌍 International Support - Ishi's Math Lab</h1>
                 
                 <p>Help us keep this educational platform <strong>free</strong> and <strong>accessible</strong> for all young mathematicians!</p>
 
@@ -353,24 +327,15 @@
                     <p>Your donation helps us maintain hosting, develop new features, and keep Ishi's Math Lab free for everyone. Every coffee helps fuel our passion for making mathematics accessible and enjoyable!</p>
                 </div>
 
-                <div class="qr-container">
-                    <img src="qr_huf.png" alt="UPI QR Code for Donation" class="qr-code">
-                </div>
-
-                <div class="upi-details">
-                    <h2 style="margin-top: 0; font-size: 1.3rem;">💳 UPI Payment Details</h2>
-                    <p><strong>UPI ID:</strong></p>
-                    <div class="upi-id">ajeetmishra-4@okhdfcbank</div>
-                    <p>Scan the QR code above or use the UPI ID directly in any UPI app</p>
-                </div>
-
-                <div style="text-align: center; margin: 25px 0;">
-                    <a href="upi://pay?pa=ajeetmishra-4@okhdfcbank&pn=DonateCoffee&am=99" class="coffee-btn">
-                        ☕ Buy Us a Coffee - ₹99
-                    </a>
-                    <a href="upi://pay?pa=ajeetmishra-4@okhdfcbank&pn=DonateCoffee&am=199" class="coffee-btn">
-                        🍰 Support Development - ₹199
-                    </a>
+                <div class="stripe-section">
+                    <h2>💳 International Payment Options</h2>
+                    <p>We're setting up secure international payment processing through Stripe to make it easy for our global supporters to contribute. This feature will be available soon!</p>
+                    
+                    <div style="background: #f8fafc; padding: 25px; border-radius: 15px; margin: 20px 0; border: 2px solid #e2e8f0; text-align: center;">
+                        <h3 style="margin-top: 0; color: var(--accent-color);">🚧 Coming Soon</h3>
+                        <p>Secure credit card and international payment processing via Stripe</p>
+                        <p style="font-style: italic; color: #666;">We appreciate your patience as we work to make international donations seamless and secure.</p>
+                    </div>
                 </div>
 
                 <div class="highlight">
