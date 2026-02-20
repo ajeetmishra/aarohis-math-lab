@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Multiplication Game</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #7209b7;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --correct-color: #38b000;
+            --wrong-color: #e63946;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- SIDEBAR ---- */
+        #sidebar {
+            width: 280px;
+            min-width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(114, 9, 183, 0.2);
+        }
+
+        button:hover { background-color: #560bad; }
+        button:active { transform: translateY(2px); }
+
+        /* ---- MAIN AREA ---- */
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+            gap: 24px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* ---- CARD ---- */
+        #card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 620px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid white;
+            padding: 30px 20px 24px;
+            transition: border-color 0.25s ease;
+        }
+
+        #card.correct { border-color: var(--correct-color); }
+        #card.wrong   { border-color: var(--wrong-color); }
+
+        #q-counter {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        #problem {
+            font-size: 6rem;
+            margin: 0 0 16px;
+            font-weight: 900;
+            color: #3f37c9;
+            line-height: 1;
+        }
+
+        /* Answer input */
+        #answer-input {
+            font-size: 2.8rem;
+            width: 180px;
+            text-align: center;
+            border: 3px solid #ced4da;
+            border-radius: 14px;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f8f9fa;
+        }
+
+        #answer-input:focus {
+            border-color: var(--accent-color);
+            background: white;
+        }
+
+        #answer-input:disabled {
+            background: #f1f3f5;
+            color: var(--text-muted);
+        }
+
+        #submit-btn {
+            margin-top: 14px;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+        }
+
+        #feedback {
+            min-height: 1.8rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #feedback.correct { color: var(--correct-color); }
+        #feedback.wrong   { color: var(--wrong-color); }
+
+        /* ---- STATS BAR ---- */
+        #stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            border-radius: 20px;
+            padding: 12px 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            min-width: 55px;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        #level-badge .stat-value { color: var(--accent-color); font-size: 1.5rem; }
+
+        .stat-divider {
+            width: 1px;
+            height: 28px;
+            background: #e9ecef;
+        }
+
+        #reset-stats-btn {
+            font-size: 0.75rem;
+            padding: 7px 14px;
+            background: #e63946;
+            border-radius: 8px;
+            box-shadow: none;
+        }
+
+        #reset-stats-btn:hover { background: #c1121f; }
+
+        /* ---- NAV ICONS ---- */
+        #nav-icons {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 4000;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        #nav-icons a, #nav-icons .nav-btn {
+            display: block;
+            padding: 9px 14px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: normal;
+            box-shadow: none;
+        }
+
+        #nav-icons a:hover, #nav-icons .nav-btn:hover {
+            background: rgba(0,0,0,0.7);
+        }
+
+        /* ---- MOBILE SIDEBAR TOGGLE ---- */
+        #menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 3000;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(114,9,183,0.3);
+        }
+
+        .desktop-text { display: inline; }
+        .mobile-text  { display: none; }
+
+        /* ---- MOBILE OVERRIDES ---- */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                width: 80%;
+                min-width: unset;
+                transition: left 0.3s ease;
+                z-index: 2000;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            }
+
+            #sidebar.open { left: 0; }
+            #menu-toggle  { display: block; }
+
+            #main-area { width: 100vw; padding: 10px; }
+            #card { width: 95%; padding: 20px 14px 18px; }
+
+            #problem      { font-size: 3.5rem !important; margin-bottom: 10px; }
+            #answer-input { font-size: 2rem; width: 150px; }
+            #submit-btn   { padding: 10px 28px; font-size: 1rem; }
+            #feedback     { font-size: 1rem; }
+
+            #stats-bar  { gap: 10px; padding: 10px 14px; }
+            .stat-value { font-size: 1.1rem; }
+            #level-badge .stat-value { font-size: 1.2rem; }
+
+            .desktop-text { display: none !important; }
+            .mobile-text  { display: inline !important; }
+
+            #nav-icons { top: 15px; right: 10px; gap: 5px; }
+            #nav-icons a, #nav-icons .nav-btn { padding: 8px 10px; font-size: 0.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            .stat-label { font-size: 0.55rem; }
+            .stat-value { font-size: 0.95rem; }
+            #level-badge .stat-value { font-size: 1rem; }
+            .stat-divider { display: none; }
+            .nav-text { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="menu-toggle">&#9776; Settings</button>
+
+    <div id="sidebar">
+        <h2>Math Settings</h2>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="allSame">
+            <label for="allSame">Practice Squares / Cubes<br><small>(All numbers will be same)</small></label>
+        </div>
+
+        <hr style="width:100%; border: 0.5px solid #eee;">
+
+        <div class="input-group">
+            <label>Number 1 (Min - Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min1" value="2" style="width:50%">
+                <input type="number" id="max1" value="12" style="width:50%">
+            </div>
+        </div>
+
+        <div class="input-group" id="group2">
+            <label>Number 2 (Min - Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min2" value="2" style="width:50%">
+                <input type="number" id="max2" value="12" style="width:50%">
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="enable3rd" onchange="toggle3rd()">
+            <label for="enable3rd">Add 3rd Number</label>
+        </div>
+
+        <div class="input-group" id="group3" style="display:none;">
+            <label>Number 3 (Min - Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min3" value="2" style="width:50%">
+                <input type="number" id="max3" value="5" style="width:50%">
+            </div>
+        </div>
+
+        <button onclick="newGame()">Start New Game</button>
+
+        <a id="history-link" href="#"
+           style="margin-top:auto; font-size:0.85rem; color:var(--accent-color);
+                  text-decoration:underline; cursor:pointer; display:block; padding-top:20px;">
+            &#128220; View Session History (0)
+        </a>
+    </div>
+
+    <div id="main-area">
+
+        <div id="card">
+            <div id="q-counter">Question #1</div>
+            <p id="problem">--</p>
+            <input
+                type="number"
+                id="answer-input"
+                placeholder="?"
+                autocomplete="off"
+                inputmode="numeric"
+            >
+            <button id="submit-btn" onclick="submitAnswer()">Submit &#10003;</button>
+            <div id="feedback"></div>
+        </div>
+
+        <div id="stats-bar">
+            <div class="stat-item" id="level-badge">
+                <span class="stat-label">Level</span>
+                <span class="stat-value" id="stat-level">1</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Questions</span>
+                <span class="stat-value" id="stat-questions">0</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Correct</span>
+                <span class="stat-value" id="stat-correct">0</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Score</span>
+                <span class="stat-value" id="stat-score">--%</span>
+            </div>
+            <div class="stat-divider"></div>
+            <button id="reset-stats-btn" onclick="resetStats()">Reset Stats</button>
+        </div>
+
+    </div>
+
+    <script>
+    // ============================================================
+    // PERSISTENCE  (localStorage — survives page reloads)
+    // Level rule: every 10 correct answers = +1 level
+    // ============================================================
+    const STORAGE_KEY = 'multigame_stats_v1';
+
+    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 }; // persisted stats
+
+    function loadStats() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const saved = JSON.parse(raw);
+                ps.totalQuestions  = saved.totalQuestions  || 0;
+                ps.correctAnswers  = saved.correctAnswers  || 0;
+                ps.level           = saved.level           || 1;
+                sessionHistory      = saved.sessionHistory  || [];
+                sessionHistoryCount = sessionHistory.length;
+                qCount              = sessionHistoryCount + 1;
+            }
+        } catch (e) { /* ignore */ }
+        renderStats();
+        updateHistoryLink();
+    }
+
+    function saveStats() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(
+                Object.assign({}, ps, { sessionHistory: sessionHistory })
+            ));
+        } catch (e) { /* ignore */ }
+    }
+
+    function recalcLevel() {
+        ps.level = 1 + Math.floor(ps.correctAnswers / 10);
+    }
+
+    function renderStats() {
+        document.getElementById('stat-level').innerText     = ps.level;
+        document.getElementById('stat-questions').innerText = ps.totalQuestions;
+        document.getElementById('stat-correct').innerText   = ps.correctAnswers;
+        document.getElementById('stat-score').innerText     = ps.totalQuestions > 0
+            ? Math.round((ps.correctAnswers / ps.totalQuestions) * 100) + '%'
+            : '--%';
+    }
+
+    function resetStats() {
+        if (!confirm('Reset all saved progress? This cannot be undone.')) return;
+        ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
+        saveStats();
+        sessionHistory = [];
+        sessionHistoryCount = 0;
+        renderStats();
+        updateHistoryLink();
+    }
+
+    // ============================================================
+    // GAME STATE
+    // ============================================================
+    let currentAnswer       = null;
+    let awaitingNext        = false;
+    let qCount              = 1;
+    let sessionHistory      = [];
+    let sessionHistoryCount = 0;
+
+    const problemEl   = document.getElementById('problem');
+    const answerInput = document.getElementById('answer-input');
+    const feedbackEl  = document.getElementById('feedback');
+    const cardEl      = document.getElementById('card');
+    const submitBtn   = document.getElementById('submit-btn');
+
+    function toggle3rd() {
+        document.getElementById('group3').style.display =
+            document.getElementById('enable3rd').checked ? 'flex' : 'none';
+    }
+
+    function getRandomInt(min, max) {
+        min = parseInt(min, 10);
+        max = parseInt(max, 10);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateProblem() {
+        const use3rd  = document.getElementById('enable3rd').checked;
+        const allSame = document.getElementById('allSame').checked;
+
+        const n1 = getRandomInt(
+            document.getElementById('min1').value,
+            document.getElementById('max1').value
+        );
+        const n2 = allSame ? n1 : getRandomInt(
+            document.getElementById('min2').value,
+            document.getElementById('max2').value
+        );
+        const n3 = use3rd
+            ? (allSame ? n1 : getRandomInt(
+                document.getElementById('min3').value,
+                document.getElementById('max3').value
+              ))
+            : null;
+
+        const expression = n3 !== null
+            ? `${n1} \u00D7 ${n2} \u00D7 ${n3}`
+            : `${n1} \u00D7 ${n2}`;
+        currentAnswer = n3 !== null ? n1 * n2 * n3 : n1 * n2;
+
+        problemEl.innerText       = expression;
+        problemEl.style.fontSize  = n3 !== null ? '5rem' : '6rem';
+        answerInput.value         = '';
+        answerInput.disabled      = false;
+        feedbackEl.innerText      = '';
+        feedbackEl.className      = '';
+        cardEl.className          = '';
+        awaitingNext              = false;
+        submitBtn.innerText       = 'Submit \u2713';
+
+        document.getElementById('q-counter').innerText = `Question #${qCount}`;
+        answerInput.focus();
+    }
+
+    function submitAnswer() {
+        // If already answered — advance to next question
+        if (awaitingNext) {
+            qCount++;
+            generateProblem();
+            return;
+        }
+
+        const raw = answerInput.value.trim();
+        if (raw === '') { answerInput.focus(); return; }
+        const userAnswer = parseInt(raw, 10);
+
+        const isCorrect = userAnswer === currentAnswer;
+
+        // Record in session history
+        sessionHistory.push({
+            no: qCount,
+            prob: problemEl.innerText,
+            ans: currentAnswer,
+            userAns: userAnswer,
+            correct: isCorrect
+        });
+        sessionHistoryCount++;
+        updateHistoryLink();
+
+        // Update persistent stats
+        ps.totalQuestions++;
+        if (isCorrect) {
+            ps.correctAnswers++;
+            feedbackEl.innerText = '\u2713 Correct!';
+            feedbackEl.className = 'correct';
+            cardEl.className     = 'correct';
+        } else {
+            feedbackEl.innerText = `\u2717 Wrong \u2014 answer is ${currentAnswer}`;
+            feedbackEl.className = 'wrong';
+            cardEl.className     = 'wrong';
+        }
+
+        recalcLevel();
+        saveStats();
+        renderStats();
+
+        awaitingNext         = true;
+        answerInput.disabled = true;
+        submitBtn.innerText  = 'Next \u2794';
+        submitBtn.focus();
+    }
+
+    function newGame() {
+        qCount = 1;
+        generateProblem();
+    }
+
+    // Enter key: submit or advance
+    answerInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
+    submitBtn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
+
+    // ============================================================
+    // SESSION HISTORY POPUP
+    // ============================================================
+    function updateHistoryLink() {
+        document.getElementById('history-link').innerText =
+            `\u{1F4DC} View Session History (${sessionHistoryCount})`;
+    }
+
+    document.getElementById('history-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (sessionHistory.length === 0) { alert('No questions answered yet!'); return; }
+        let report = `Session History \u2014 ${sessionHistory.length} question(s)\n\n`;
+        sessionHistory.forEach(function(item) {
+            const mark = item.correct ? '\u2713' : '\u2717';
+            report += `${mark}  Q${item.no}: ${item.prob} = ${item.ans}`;
+            if (!item.correct) report += `  (you entered: ${item.userAns})`;
+            report += '\n';
+        });
+        alert(report);
+    });
+
+    // ============================================================
+    // NAV ICONS
+    // ============================================================
+    (function() {
+        const nav = document.createElement('div');
+        nav.id = 'nav-icons';
+
+        function makeLink(href, html, title, bgColor) {
+            const a = document.createElement('a');
+            a.href = href;
+            a.innerHTML = html;
+            a.title = title;
+            if (bgColor) a.style.background = bgColor;
+            return a;
+        }
+
+        nav.appendChild(makeLink('index.html',
+            '\u{1F3E0}<span class="nav-text"> Home</span>', 'Home'));
+
+        nav.appendChild(makeLink('about.html',
+            '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
+
+        nav.appendChild(makeLink('donate.html',
+            '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
+            'Support with a coffee', 'rgba(255,165,0,0.9)'));
+
+        nav.appendChild(makeLink('donate_usd.html',
+            '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
+            'International support', 'rgba(34,197,94,0.9)'));
+
+        const fsBtn = document.createElement('button');
+        fsBtn.className = 'nav-btn';
+        fsBtn.title     = 'Toggle Full Screen';
+        fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+        fsBtn.onclick   = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u2715 Exit Full Screen</span><span class="mobile-text">\u2715</span>';
+            } else {
+                document.exitFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+            }
+        };
+        nav.appendChild(fsBtn);
+
+        document.body.appendChild(nav);
+    })();
+
+    // ============================================================
+    // MOBILE SIDEBAR TOGGLE
+    // ============================================================
+    (function() {
+        const toggleBtn = document.getElementById('menu-toggle');
+        const sidebar   = document.getElementById('sidebar');
+
+        toggleBtn.onclick = function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+            toggleBtn.innerHTML = sidebar.classList.contains('open')
+                ? '\u2715 Close'
+                : '\u2630 Settings';
+        };
+
+        document.getElementById('main-area').onclick = function() {
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                toggleBtn.innerHTML = '\u2630 Settings';
+            }
+        };
+    })();
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    loadStats();
+    generateProblem();
+    </script>
+</body>
+</html>

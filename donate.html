@@ -35,6 +35,9 @@
             }
         }
 
+        .desktop-text { display: inline; }
+        .mobile-text  { display: none; }
+
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -84,6 +87,10 @@
 
             .content h1 { font-size: 2rem !important; }
             .content h2 { font-size: 1.5rem !important; }
+            .desktop-text { display: none !important; }
+            .mobile-text  { display: inline !important; }
+            #nav-icons { right: 15px !important; flex-wrap: wrap; justify-content: flex-end; gap: 5px !important; }
+            #nav-icons a, #nav-icons button { padding: 8px 10px !important; font-size: 0.8rem !important; }
         }
 
         /* Hide toggle on desktop */
@@ -384,48 +391,46 @@
     </div>
 
     <script>
-        // Navigation icons
+        // Navigation icons + fullscreen
         (function() {
             const navIcons = document.createElement('div');
             navIcons.id = 'nav-icons';
-            navIcons.style = "position: fixed; top: 15px; right: 270px; z-index: 4000; display: flex; gap: 10px;";
-            
+            navIcons.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;";
+
+            const linkStyle = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
+
             const homeLink = document.createElement('a');
             homeLink.href = 'index.html';
-            homeLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
+            homeLink.style = linkStyle;
             homeLink.innerHTML = '🏠<span class="nav-text"> Home</span>';
             homeLink.title = 'Home';
-            
+
             const aboutLink = document.createElement('a');
             aboutLink.href = 'about.html';
-            aboutLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
-            aboutLink.innerHTML = 'ℹ️ About';
+            aboutLink.style = linkStyle;
+            aboutLink.innerHTML = 'ℹ️<span class="nav-text"> About</span>';
             aboutLink.title = 'About';
-            
-            navIcons.appendChild(homeLink);
-            navIcons.appendChild(aboutLink);
-            document.body.appendChild(navIcons);
-        })();
 
-        // Full screen toggle functionality
-        (function() {
             const fsBtn = document.createElement('button');
             fsBtn.id = 'fs-toggle';
-            fsBtn.innerHTML = '⛶ Full Screen';
-            fsBtn.style = "position: fixed; top: 15px; right: 15px; z-index: 4000; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
-            document.body.appendChild(fsBtn);
-
+            fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
+            fsBtn.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
             fsBtn.onclick = function() {
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(err => {
                         alert(`Error attempting to enable full-screen mode: ${err.message}`);
                     });
-                    fsBtn.innerHTML = '✕ Exit Full Screen';
+                    fsBtn.innerHTML = '<span class="desktop-text">✕ Exit Full Screen</span><span class="mobile-text">✕</span>';
                 } else {
                     document.exitFullscreen();
-                    fsBtn.innerHTML = '⛶ Full Screen';
+                    fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
                 }
             };
+
+            navIcons.appendChild(homeLink);
+            navIcons.appendChild(aboutLink);
+            navIcons.appendChild(fsBtn);
+            document.body.appendChild(navIcons);
         })();
 
         // Mobile menu toggle functionality
