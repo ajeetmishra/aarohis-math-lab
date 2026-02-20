@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Multiplication Game</title>
+    <title>Fast-Track Quiz</title>
     <style>
         :root {
             --bg-color: #f8f9fa;
             --sidebar-bg: #ffffff;
             --card-bg: #ffffff;
-            --accent-color: #7209b7;
+            --accent-color: #6366f1;
             --text-main: #2b2d42;
             --text-muted: #8d99ae;
             --correct-color: #38b000;
@@ -53,28 +53,31 @@
             border-radius: 12px;
         }
 
-        .checkbox-group {
+        .label-title { font-weight: bold; font-size: 0.8rem; text-transform: uppercase; color: #64748b; }
+
+        .check-label {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 600;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
             cursor: pointer;
-            padding: 5px;
-        }
-
-        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
-
-        input[type="number"] {
-            padding: 0.5rem;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 1rem;
+            padding: 3px 0;
         }
 
         input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
+            accent-color: var(--accent-color);
+        }
+
+        select {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            width: 100%;
         }
 
         button {
@@ -87,10 +90,10 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(114, 9, 183, 0.2);
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
         }
 
-        button:hover { background-color: #560bad; }
+        button:hover { filter: brightness(1.1); }
         button:active { transform: translateY(2px); }
 
         /* ---- MAIN AREA ---- */
@@ -131,21 +134,31 @@
             font-size: 0.95rem;
             font-weight: bold;
             color: var(--text-muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+        }
+
+        #cat-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
         }
 
         #problem {
-            font-size: 6rem;
+            font-size: 5rem;
             margin: 0 0 16px;
             font-weight: 900;
-            color: #3f37c9;
-            line-height: 1;
+            color: #6366f1;
+            line-height: 1.1;
+            word-break: break-word;
         }
 
         /* Answer input */
         #answer-input {
-            font-size: 2.8rem;
-            width: 180px;
+            font-size: 2.4rem;
+            width: 220px;
             text-align: center;
             border: 3px solid #ced4da;
             border-radius: 14px;
@@ -176,7 +189,7 @@
 
         #feedback {
             min-height: 1.8rem;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: bold;
             margin-top: 10px;
         }
@@ -281,7 +294,7 @@
             padding: 10px 15px;
             border-radius: 8px;
             font-weight: bold;
-            box-shadow: 0 2px 8px rgba(114,9,183,0.3);
+            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
         }
 
         .desktop-text { display: inline; }
@@ -307,8 +320,8 @@
             #main-area { width: 100vw; padding: 10px; }
             #card { width: 95%; padding: 20px 14px 18px; }
 
-            #problem      { font-size: 3.5rem !important; margin-bottom: 10px; }
-            #answer-input { font-size: 2rem; width: 150px; }
+            #problem      { font-size: 3rem !important; margin-bottom: 10px; }
+            #answer-input { font-size: 1.8rem; width: 170px; }
             #submit-btn   { padding: 10px 28px; font-size: 1rem; }
             #feedback     { font-size: 1rem; }
 
@@ -362,42 +375,30 @@
     <button id="menu-toggle">&#9776; Settings</button>
 
     <div id="sidebar">
-        <h2>Math Settings</h2>
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="allSame">
-            <label for="allSame">Practice Squares / Cubes<br><small>(All numbers will be same)</small></label>
-        </div>
-
-        <hr style="width:100%; border: 0.5px solid #eee;">
+        <h2>Fast-Track Quiz</h2>
 
         <div class="input-group">
-            <label>Number 1 (Min - Max)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="min1" value="2" style="width:50%">
-                <input type="number" id="max1" value="12" style="width:50%">
-            </div>
+            <span class="label-title">Number Sets</span>
+            <label class="check-label"><input type="checkbox" value="friendly" checked> Friendly (1/2, 1/4, 1/5)</label>
+            <label class="check-label"><input type="checkbox" value="eighths" checked> Eighths (12.5%, 37.5%)</label>
+            <label class="check-label"><input type="checkbox" value="thirds"> Thirds (33.3%, 66.6%)</label>
+            <label class="check-label"><input type="checkbox" value="primes"> Master Primes (1/7, 1/11, 1/13)</label>
         </div>
 
-        <div class="input-group" id="group2">
-            <label>Number 2 (Min - Max)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="min2" value="2" style="width:50%">
-                <input type="number" id="max2" value="12" style="width:50%">
-            </div>
+        <div class="input-group">
+            <span class="label-title">Challenge Type</span>
+            <select id="modeSelect">
+                <option value="p2f">Percent ➔ Fraction</option>
+                <option value="f2p">Fraction ➔ Percent</option>
+                <option value="f2d">Fraction ➔ Decimal</option>
+                <option value="d2f">Decimal ➔ Fraction</option>
+                <option value="app">Application (Mental Calc)</option>
+            </select>
         </div>
 
-        <div class="checkbox-group">
-            <input type="checkbox" id="enable3rd" onchange="toggle3rd()">
-            <label for="enable3rd">Add 3rd Number</label>
-        </div>
-
-        <div class="input-group" id="group3" style="display:none;">
-            <label>Number 3 (Min - Max)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="min3" value="2" style="width:50%">
-                <input type="number" id="max3" value="5" style="width:50%">
-            </div>
+        <div class="input-group">
+            <span class="label-title">Mode</span>
+            <label class="check-label"><input type="checkbox" id="flipCheck"> 🔄 Flip (Find the Whole)</label>
         </div>
 
         <button onclick="newGame()">Start New Game</button>
@@ -413,13 +414,14 @@
 
         <div id="card">
             <div id="q-counter">Question #1</div>
+            <div id="cat-label">--</div>
             <p id="problem">--</p>
             <input
-                type="number"
+                type="text"
                 id="answer-input"
-                placeholder="?"
+                placeholder="e.g. 1/2"
                 autocomplete="off"
-                inputmode="numeric"
+                inputmode="text"
             >
             <button id="submit-btn" onclick="submitAnswer()">Submit &#10003;</button>
             <div id="feedback"></div>
@@ -453,12 +455,11 @@
 
     <script>
     // ============================================================
-    // PERSISTENCE  (localStorage — survives page reloads)
-    // Level rule: every 10 correct answers = +1 level
+    // PERSISTENCE
     // ============================================================
-    const STORAGE_KEY = 'multigame_stats_v1';
+    const STORAGE_KEY = 'ftgame_stats_v1';
 
-    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 }; // persisted stats
+    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
 
     function loadStats() {
         try {
@@ -509,9 +510,62 @@
     }
 
     // ============================================================
+    // LIBRARY (same as fast_track.html)
+    // ============================================================
+    const library = {
+        friendly: [
+            { p: '50%',  f: '1/2',  d: '0.5',   t: 'Half',            v: 0.5 },
+            { p: '25%',  f: '1/4',  d: '0.25',  t: 'Quarter',         v: 0.25 },
+            { p: '20%',  f: '1/5',  d: '0.2',   t: 'One-fifth',       v: 0.2 },
+            { p: '10%',  f: '1/10', d: '0.1',   t: 'One-tenth',       v: 0.1 },
+            { p: '75%',  f: '3/4',  d: '0.75',  t: 'Three Quarters',  v: 0.75 }
+        ],
+        eighths: [
+            { p: '12.5%', f: '1/8', d: '0.125', t: 'Half of 25%',    v: 0.125 },
+            { p: '37.5%', f: '3/8', d: '0.375', t: 'Three eighths',  v: 0.375 },
+            { p: '62.5%', f: '5/8', d: '0.625', t: 'Five eighths',   v: 0.625 },
+            { p: '87.5%', f: '7/8', d: '0.875', t: 'Seven eighths',  v: 0.875 }
+        ],
+        thirds: [
+            { p: '33.3%', f: '1/3', d: '0.33',  t: 'One third',  v: 1/3 },
+            { p: '66.6%', f: '2/3', d: '0.66',  t: 'Two thirds', v: 2/3 },
+            { p: '16.6%', f: '1/6', d: '0.16',  t: 'One sixth',  v: 1/6 }
+        ],
+        primes: [
+            { p: '14.28%', f: '1/7',  d: '0.142', t: 'The Magic 7th',          v: 1/7 },
+            { p: '9.09%',  f: '1/11', d: '0.09',  t: 'Double Nine',            v: 1/11 },
+            { p: '7.69%',  f: '1/13', d: '0.076', t: "The Baker's Dozen Part", v: 1/13 }
+        ]
+    };
+
+    // ============================================================
+    // ANSWER PARSING & COMPARISON
+    // ============================================================
+    function parseToDecimal(str) {
+        str = str.trim().replace(/\s+/g, '');
+        if (!str) return NaN;
+        if (str.endsWith('%')) return parseFloat(str) / 100;
+        if (str.includes('/')) {
+            const parts = str.split('/');
+            if (parts.length !== 2) return NaN;
+            const n = parseFloat(parts[0]);
+            const d = parseFloat(parts[1]);
+            return n / d;
+        }
+        return parseFloat(str);
+    }
+
+    function answersClose(user, correct) {
+        return Math.abs(user - correct) < 0.001;
+    }
+
+    // ============================================================
     // GAME STATE
     // ============================================================
-    let currentAnswer       = null;
+    let currentAnswer       = null;  // decimal value (0-1 for non-app)
+    let currentAnswerStr    = '';    // display string for wrong feedback
+    let currentProblemText  = '';
+    let currentPlaceholder  = 'e.g. 1/2';
     let awaitingNext        = false;
     let currentStreak       = 0;
     let qCount              = 1;
@@ -523,17 +577,7 @@
     const feedbackEl  = document.getElementById('feedback');
     const cardEl      = document.getElementById('card');
     const submitBtn   = document.getElementById('submit-btn');
-
-    function toggle3rd() {
-        document.getElementById('group3').style.display =
-            document.getElementById('enable3rd').checked ? 'flex' : 'none';
-    }
-
-    function getRandomInt(min, max) {
-        min = parseInt(min, 10);
-        max = parseInt(max, 10);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    const catLabel    = document.getElementById('cat-label');
 
     function fireStreakConfetti(n) {
         const toast = document.getElementById('streak-toast');
@@ -546,45 +590,93 @@
     }
 
     function generateProblem() {
-        const use3rd  = document.getElementById('enable3rd').checked;
-        const allSame = document.getElementById('allSame').checked;
+        const setCheckboxes = document.querySelectorAll('.input-group input[type="checkbox"][value]');
+        const sets = Array.from(setCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+        if (sets.length === 0) { alert('Select at least one Number Set!'); return; }
 
-        const n1 = getRandomInt(
-            document.getElementById('min1').value,
-            document.getElementById('max1').value
-        );
-        const n2 = allSame ? n1 : getRandomInt(
-            document.getElementById('min2').value,
-            document.getElementById('max2').value
-        );
-        const n3 = use3rd
-            ? (allSame ? n1 : getRandomInt(
-                document.getElementById('min3').value,
-                document.getElementById('max3').value
-              ))
-            : null;
+        const mode      = document.getElementById('modeSelect').value;
+        const isFlipped = document.getElementById('flipCheck').checked;
 
-        const expression = n3 !== null
-            ? `${n1} \u00D7 ${n2} \u00D7 ${n3}`
-            : `${n1} \u00D7 ${n2}`;
-        currentAnswer = n3 !== null ? n1 * n2 * n3 : n1 * n2;
+        let pool = [];
+        sets.forEach(s => { if (library[s]) pool = pool.concat(library[s]); });
+        const item = pool[Math.floor(Math.random() * pool.length)];
 
-        problemEl.innerText       = expression;
-        problemEl.style.fontSize  = n3 !== null ? '5rem' : '6rem';
-        answerInput.value         = '';
-        answerInput.disabled      = false;
-        feedbackEl.innerText      = '';
-        feedbackEl.className      = '';
-        cardEl.className          = '';
-        awaitingNext              = false;
-        submitBtn.innerText       = 'Submit \u2713';
+        if (isFlipped) {
+            catLabel.innerText = 'Find the Whole';
+            const num = parseInt(item.f.split('/')[0]);
+            const den = parseInt(item.f.split('/')[1]);
+            const multiplier = Math.floor(Math.random() * 10) + 1;
+            const partValue  = num * multiplier;
+            const whole      = multiplier * den;
+
+            currentProblemText = `${partValue} is ${item.f} of what?`;
+            currentAnswer      = whole;
+            currentAnswerStr   = String(whole);
+            currentPlaceholder = 'e.g. 24';
+        } else {
+            switch (mode) {
+                case 'p2f':
+                    catLabel.innerText      = 'Percent \u2794 Fraction';
+                    currentProblemText      = item.p;
+                    currentAnswer           = item.v;
+                    currentAnswerStr        = item.f;
+                    currentPlaceholder      = 'e.g. 1/2';
+                    break;
+                case 'f2p':
+                    catLabel.innerText      = 'Fraction \u2794 Percent';
+                    currentProblemText      = item.f;
+                    currentAnswer           = item.v;
+                    currentAnswerStr        = item.p;
+                    currentPlaceholder      = 'e.g. 50%';
+                    break;
+                case 'f2d':
+                    catLabel.innerText      = 'Fraction \u2794 Decimal';
+                    currentProblemText      = item.f;
+                    currentAnswer           = item.v;
+                    currentAnswerStr        = item.d;
+                    currentPlaceholder      = 'e.g. 0.5';
+                    break;
+                case 'd2f':
+                    catLabel.innerText      = 'Decimal \u2794 Fraction';
+                    currentProblemText      = item.d;
+                    currentAnswer           = item.v;
+                    currentAnswerStr        = item.f;
+                    currentPlaceholder      = 'e.g. 1/2';
+                    break;
+                case 'app': {
+                    catLabel.innerText      = 'Fast Application';
+                    const den               = parseInt(item.f.split('/')[1]);
+                    const base              = (Math.floor(Math.random() * 10) + 1) * den;
+                    currentProblemText      = `${item.f} of ${base}`;
+                    currentAnswer           = base / den;
+                    currentAnswerStr        = String(base / den);
+                    currentPlaceholder      = 'e.g. 6';
+                    break;
+                }
+                default:
+                    catLabel.innerText = '';
+                    currentProblemText = item.p;
+                    currentAnswer      = item.v;
+                    currentAnswerStr   = item.f;
+                    currentPlaceholder = 'e.g. 1/2';
+            }
+        }
+
+        problemEl.innerText        = currentProblemText;
+        answerInput.placeholder    = currentPlaceholder;
+        answerInput.value          = '';
+        answerInput.disabled       = false;
+        feedbackEl.innerText       = '';
+        feedbackEl.className       = '';
+        cardEl.className           = '';
+        awaitingNext               = false;
+        submitBtn.innerText        = 'Submit \u2713';
 
         document.getElementById('q-counter').innerText = `Question #${qCount}`;
         answerInput.focus();
     }
 
     function submitAnswer() {
-        // If already answered — advance to next question
         if (awaitingNext) {
             qCount++;
             generateProblem();
@@ -593,22 +685,27 @@
 
         const raw = answerInput.value.trim();
         if (raw === '') { answerInput.focus(); return; }
-        const userAnswer = parseInt(raw, 10);
 
-        const isCorrect = userAnswer === currentAnswer;
+        const userDecimal = parseToDecimal(raw);
+        if (isNaN(userDecimal)) {
+            feedbackEl.innerText = 'Enter a valid answer (e.g. 1/2, 50%, 0.5)';
+            feedbackEl.className = 'wrong';
+            answerInput.focus();
+            return;
+        }
 
-        // Record in session history
+        const isCorrect = answersClose(userDecimal, currentAnswer);
+
         sessionHistory.push({
             no: qCount,
-            prob: problemEl.innerText,
-            ans: currentAnswer,
-            userAns: userAnswer,
+            prob: currentProblemText,
+            ans: currentAnswerStr,
+            userAns: raw,
             correct: isCorrect
         });
         sessionHistoryCount++;
         updateHistoryLink();
 
-        // Update persistent stats
         ps.totalQuestions++;
         if (isCorrect) {
             ps.correctAnswers++;
@@ -616,7 +713,7 @@
             feedbackEl.className = 'correct';
             cardEl.className     = 'correct';
         } else {
-            feedbackEl.innerText = `\u2717 Wrong \u2014 answer is ${currentAnswer}`;
+            feedbackEl.innerText = `\u2717 Wrong \u2014 answer is ${currentAnswerStr}`;
             feedbackEl.className = 'wrong';
             cardEl.className     = 'wrong';
         }
@@ -644,7 +741,6 @@
         generateProblem();
     }
 
-    // Enter key: submit or advance
     answerInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
     });
@@ -691,14 +787,11 @@
 
         nav.appendChild(makeLink('index.html',
             '\u{1F3E0}<span class="nav-text"> Home</span>', 'Home'));
-
         nav.appendChild(makeLink('about.html',
             '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
-
         nav.appendChild(makeLink('donate.html',
             '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
             'Support with a coffee', 'rgba(255,165,0,0.9)'));
-
         nav.appendChild(makeLink('donate_usd.html',
             '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
             'International support', 'rgba(34,197,94,0.9)'));

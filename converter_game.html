@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Multiplication Game</title>
+    <title>Converter Quiz</title>
     <style>
         :root {
             --bg-color: #f8f9fa;
             --sidebar-bg: #ffffff;
             --card-bg: #ffffff;
-            --accent-color: #7209b7;
+            --accent-color: #ea580c;
             --text-main: #2b2d42;
             --text-muted: #8d99ae;
             --correct-color: #38b000;
@@ -53,28 +53,30 @@
             border-radius: 12px;
         }
 
-        .checkbox-group {
+        .label-title { font-weight: bold; font-size: 0.8rem; text-transform: uppercase; color: #64748b; }
+
+        .check-label {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 600;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
             cursor: pointer;
-            padding: 5px;
+            padding: 3px 0;
         }
 
-        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent-color);
+        }
 
         input[type="number"] {
             padding: 0.5rem;
             border: 1px solid #ced4da;
             border-radius: 6px;
             font-size: 1rem;
-        }
-
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
         }
 
         button {
@@ -87,10 +89,10 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(114, 9, 183, 0.2);
+            box-shadow: 0 4px 6px rgba(234, 88, 12, 0.2);
         }
 
-        button:hover { background-color: #560bad; }
+        button:hover { filter: brightness(1.1); }
         button:active { transform: translateY(2px); }
 
         /* ---- MAIN AREA ---- */
@@ -134,18 +136,28 @@
             margin-bottom: 8px;
         }
 
+        #cat-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
         #problem {
-            font-size: 6rem;
+            font-size: 3.8rem;
             margin: 0 0 16px;
             font-weight: 900;
-            color: #3f37c9;
-            line-height: 1;
+            color: #ea580c;
+            line-height: 1.1;
+            word-break: break-word;
         }
 
         /* Answer input */
         #answer-input {
-            font-size: 2.8rem;
-            width: 180px;
+            font-size: 2.4rem;
+            width: 220px;
             text-align: center;
             border: 3px solid #ced4da;
             border-radius: 14px;
@@ -176,7 +188,7 @@
 
         #feedback {
             min-height: 1.8rem;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: bold;
             margin-top: 10px;
         }
@@ -281,7 +293,7 @@
             padding: 10px 15px;
             border-radius: 8px;
             font-weight: bold;
-            box-shadow: 0 2px 8px rgba(114,9,183,0.3);
+            box-shadow: 0 2px 8px rgba(234,88,12,0.3);
         }
 
         .desktop-text { display: inline; }
@@ -307,10 +319,10 @@
             #main-area { width: 100vw; padding: 10px; }
             #card { width: 95%; padding: 20px 14px 18px; }
 
-            #problem      { font-size: 3.5rem !important; margin-bottom: 10px; }
-            #answer-input { font-size: 2rem; width: 150px; }
+            #problem      { font-size: 2.5rem !important; margin-bottom: 10px; }
+            #answer-input { font-size: 1.8rem; width: 170px; }
             #submit-btn   { padding: 10px 28px; font-size: 1rem; }
-            #feedback     { font-size: 1rem; }
+            #feedback     { font-size: 0.95rem; }
 
             #stats-bar  { gap: 10px; padding: 10px 14px; }
             .stat-value { font-size: 1.1rem; }
@@ -362,42 +374,21 @@
     <button id="menu-toggle">&#9776; Settings</button>
 
     <div id="sidebar">
-        <h2>Math Settings</h2>
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="allSame">
-            <label for="allSame">Practice Squares / Cubes<br><small>(All numbers will be same)</small></label>
-        </div>
-
-        <hr style="width:100%; border: 0.5px solid #eee;">
+        <h2>Converter Quiz</h2>
 
         <div class="input-group">
-            <label>Number 1 (Min - Max)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="min1" value="2" style="width:50%">
-                <input type="number" id="max1" value="12" style="width:50%">
-            </div>
+            <span class="label-title">Categories</span>
+            <label class="check-label"><input type="checkbox" value="distance" checked> Distance / Length</label>
+            <label class="check-label"><input type="checkbox" value="time" checked> Time</label>
+            <label class="check-label"><input type="checkbox" value="volume" checked> Volume</label>
+            <label class="check-label"><input type="checkbox" value="weight" checked> Weight / Mass</label>
+            <label class="check-label"><input type="checkbox" value="currency" checked> Denominations</label>
         </div>
 
-        <div class="input-group" id="group2">
-            <label>Number 2 (Min - Max)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="min2" value="2" style="width:50%">
-                <input type="number" id="max2" value="12" style="width:50%">
-            </div>
-        </div>
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="enable3rd" onchange="toggle3rd()">
-            <label for="enable3rd">Add 3rd Number</label>
-        </div>
-
-        <div class="input-group" id="group3" style="display:none;">
-            <label>Number 3 (Min - Max)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="min3" value="2" style="width:50%">
-                <input type="number" id="max3" value="5" style="width:50%">
-            </div>
+        <div class="input-group">
+            <span class="label-title">Unit Systems</span>
+            <label class="check-label"><input type="checkbox" id="siCheck" checked> SI Units (Metric)</label>
+            <label class="check-label"><input type="checkbox" id="nonSiCheck" checked> Non-SI (Imperial)</label>
         </div>
 
         <button onclick="newGame()">Start New Game</button>
@@ -413,13 +404,15 @@
 
         <div id="card">
             <div id="q-counter">Question #1</div>
+            <div id="cat-label">DISTANCE</div>
             <p id="problem">--</p>
             <input
                 type="number"
                 id="answer-input"
                 placeholder="?"
                 autocomplete="off"
-                inputmode="numeric"
+                inputmode="decimal"
+                step="any"
             >
             <button id="submit-btn" onclick="submitAnswer()">Submit &#10003;</button>
             <div id="feedback"></div>
@@ -453,12 +446,11 @@
 
     <script>
     // ============================================================
-    // PERSISTENCE  (localStorage — survives page reloads)
-    // Level rule: every 10 correct answers = +1 level
+    // PERSISTENCE
     // ============================================================
-    const STORAGE_KEY = 'multigame_stats_v1';
+    const STORAGE_KEY = 'convgame_stats_v1';
 
-    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 }; // persisted stats
+    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
 
     function loadStats() {
         try {
@@ -509,9 +501,59 @@
     }
 
     // ============================================================
+    // CONVERSION DATA
+    // ============================================================
+    const data = {
+        distance: [
+            { f: 'meters', t: 'cm', m: 100, si: true },
+            { f: 'km', t: 'meters', m: 1000, si: true },
+            { f: 'meters', t: 'mm', m: 1000, si: true },
+            { f: 'inches', t: 'cm', m: 2.54, si: false },
+            { f: 'feet', t: 'inches', m: 12, si: false },
+            { f: 'yards', t: 'feet', m: 3, si: false }
+        ],
+        time: [
+            { f: 'hours', t: 'minutes', m: 60, si: true },
+            { f: 'minutes', t: 'seconds', m: 60, si: true },
+            { f: 'days', t: 'hours', m: 24, si: true },
+            { f: 'weeks', t: 'days', m: 7, si: true }
+        ],
+        volume: [
+            { f: 'liters', t: 'ml', m: 1000, si: true },
+            { f: 'liters', t: 'cm\u00B3', m: 1000, si: true },
+            { f: 'm\u00B3', t: 'liters', m: 1000, si: true },
+            { f: 'dm\u00B3', t: 'liters', m: 1, si: true },
+            { f: 'gallons', t: 'liters', m: 3.785, si: false }
+        ],
+        weight: [
+            { f: 'kg', t: 'grams', m: 1000, si: true },
+            { f: 'grams', t: 'mg', m: 1000, si: true },
+            { f: 'tonnes', t: 'kg', m: 1000, si: true },
+            { f: 'pounds', t: 'ounces', m: 16, si: false },
+            { f: 'kg', t: 'pounds', m: 2.204, si: false }
+        ],
+        currency: [
+            { f: 'Lac', t: 'Thousands', m: 100, si: false },
+            { f: 'Million', t: 'Lacs', m: 10, si: false },
+            { f: 'Crore', t: 'Millions', m: 10, si: false },
+            { f: 'Billion', t: 'Crores', m: 100, si: false }
+        ]
+    };
+
+    // ============================================================
+    // ANSWER VALIDATION
+    // ============================================================
+    function answersClose(user, correct) {
+        const tol = Math.max(Math.abs(correct) * 0.01, 0.01);
+        return Math.abs(user - correct) <= tol;
+    }
+
+    // ============================================================
     // GAME STATE
     // ============================================================
-    let currentAnswer       = null;
+    let currentAnswer       = null;  // float
+    let currentUnit         = '';    // e.g. "cm"
+    let currentProblemText  = '';
     let awaitingNext        = false;
     let currentStreak       = 0;
     let qCount              = 1;
@@ -524,17 +566,6 @@
     const cardEl      = document.getElementById('card');
     const submitBtn   = document.getElementById('submit-btn');
 
-    function toggle3rd() {
-        document.getElementById('group3').style.display =
-            document.getElementById('enable3rd').checked ? 'flex' : 'none';
-    }
-
-    function getRandomInt(min, max) {
-        min = parseInt(min, 10);
-        max = parseInt(max, 10);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
     function fireStreakConfetti(n) {
         const toast = document.getElementById('streak-toast');
         toast.textContent = '\uD83C\uDF89 ' + n + ' in a row!';
@@ -546,45 +577,50 @@
     }
 
     function generateProblem() {
-        const use3rd  = document.getElementById('enable3rd').checked;
-        const allSame = document.getElementById('allSame').checked;
+        const catCheckboxes = document.querySelectorAll('.input-group input[type="checkbox"][value]');
+        const selectedCats  = Array.from(catCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+        const useSi    = document.getElementById('siCheck').checked;
+        const useNonSi = document.getElementById('nonSiCheck').checked;
 
-        const n1 = getRandomInt(
-            document.getElementById('min1').value,
-            document.getElementById('max1').value
-        );
-        const n2 = allSame ? n1 : getRandomInt(
-            document.getElementById('min2').value,
-            document.getElementById('max2').value
-        );
-        const n3 = use3rd
-            ? (allSame ? n1 : getRandomInt(
-                document.getElementById('min3').value,
-                document.getElementById('max3').value
-              ))
-            : null;
+        if (selectedCats.length === 0) { alert('Select at least one category!'); return; }
 
-        const expression = n3 !== null
-            ? `${n1} \u00D7 ${n2} \u00D7 ${n3}`
-            : `${n1} \u00D7 ${n2}`;
-        currentAnswer = n3 !== null ? n1 * n2 * n3 : n1 * n2;
+        let pool = [];
+        selectedCats.forEach(cat => {
+            data[cat].forEach(unit => {
+                if ((unit.si && useSi) || (!unit.si && useNonSi)) {
+                    pool.push({ ...unit, cat: cat.toUpperCase() });
+                }
+            });
+        });
 
-        problemEl.innerText       = expression;
-        problemEl.style.fontSize  = n3 !== null ? '5rem' : '6rem';
-        answerInput.value         = '';
-        answerInput.disabled      = false;
-        feedbackEl.innerText      = '';
-        feedbackEl.className      = '';
-        cardEl.className          = '';
-        awaitingNext              = false;
-        submitBtn.innerText       = 'Submit \u2713';
+        if (pool.length === 0) { alert('No units match your settings!'); return; }
+
+        const unit   = pool[Math.floor(Math.random() * pool.length)];
+        const val    = parseFloat((Math.random() * 10 + 1).toFixed(unit.m > 100 ? 0 : 1));
+        const result = parseFloat((val * unit.m).toFixed(unit.m % 1 === 0 ? 0 : 2));
+
+        currentAnswer = result;
+        currentUnit   = unit.t;
+
+        document.getElementById('cat-label').innerText = unit.cat;
+        currentProblemText = `${val} ${unit.f} = ? ${unit.t}`;
+        problemEl.innerText = currentProblemText;
+
+        answerInput.value    = '';
+        answerInput.disabled = false;
+        feedbackEl.innerText = '';
+        feedbackEl.className = '';
+        cardEl.className     = '';
+        awaitingNext         = false;
+        submitBtn.innerText  = 'Submit \u2713';
 
         document.getElementById('q-counter').innerText = `Question #${qCount}`;
         answerInput.focus();
     }
 
     function submitAnswer() {
-        // If already answered — advance to next question
         if (awaitingNext) {
             qCount++;
             generateProblem();
@@ -593,22 +629,21 @@
 
         const raw = answerInput.value.trim();
         if (raw === '') { answerInput.focus(); return; }
-        const userAnswer = parseInt(raw, 10);
+        const userVal = parseFloat(raw);
+        if (isNaN(userVal)) { feedbackEl.innerText = 'Enter a valid number'; feedbackEl.className = 'wrong'; return; }
 
-        const isCorrect = userAnswer === currentAnswer;
+        const isCorrect = answersClose(userVal, currentAnswer);
 
-        // Record in session history
         sessionHistory.push({
             no: qCount,
-            prob: problemEl.innerText,
-            ans: currentAnswer,
-            userAns: userAnswer,
+            prob: currentProblemText,
+            ans: currentAnswer + ' ' + currentUnit,
+            userAns: raw,
             correct: isCorrect
         });
         sessionHistoryCount++;
         updateHistoryLink();
 
-        // Update persistent stats
         ps.totalQuestions++;
         if (isCorrect) {
             ps.correctAnswers++;
@@ -616,7 +651,7 @@
             feedbackEl.className = 'correct';
             cardEl.className     = 'correct';
         } else {
-            feedbackEl.innerText = `\u2717 Wrong \u2014 answer is ${currentAnswer}`;
+            feedbackEl.innerText = `\u2717 Wrong \u2014 answer is ${currentAnswer} ${currentUnit}`;
             feedbackEl.className = 'wrong';
             cardEl.className     = 'wrong';
         }
@@ -644,7 +679,6 @@
         generateProblem();
     }
 
-    // Enter key: submit or advance
     answerInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
     });
@@ -666,7 +700,7 @@
         let report = `Session History \u2014 ${sessionHistory.length} question(s)\n\n`;
         sessionHistory.forEach(function(item) {
             const mark = item.correct ? '\u2713' : '\u2717';
-            report += `${mark}  Q${item.no}: ${item.prob} = ${item.ans}`;
+            report += `${mark}  Q${item.no}: ${item.prob.replace(' = ? ' + currentUnit, '')} = ${item.ans}`;
             if (!item.correct) report += `  (you entered: ${item.userAns})`;
             report += '\n';
         });
@@ -691,14 +725,11 @@
 
         nav.appendChild(makeLink('index.html',
             '\u{1F3E0}<span class="nav-text"> Home</span>', 'Home'));
-
         nav.appendChild(makeLink('about.html',
             '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
-
         nav.appendChild(makeLink('donate.html',
             '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
             'Support with a coffee', 'rgba(255,165,0,0.9)'));
-
         nav.appendChild(makeLink('donate_usd.html',
             '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
             'International support', 'rgba(34,197,94,0.9)'));
