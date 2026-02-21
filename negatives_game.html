@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Multiplication Game</title>
+    <title>Negative Numbers Quiz</title>
     <style>
         :root {
             --bg-color: #f8f9fa;
             --sidebar-bg: #ffffff;
             --card-bg: #ffffff;
-            --accent-color: #7209b7;
+            --accent-color: #dc2626;
             --text-main: #2b2d42;
             --text-muted: #8d99ae;
             --correct-color: #38b000;
@@ -87,10 +87,10 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(114, 9, 183, 0.2);
+            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
         }
 
-        button:hover { background-color: #560bad; }
+        button:hover { background-color: #b91c1c; }
         button:active { transform: translateY(2px); }
 
         /* ---- MAIN AREA ---- */
@@ -135,17 +135,37 @@
         }
 
         #problem {
-            font-size: 6rem;
+            font-size: 3.5rem;
             margin: 0 0 16px;
             font-weight: 900;
             color: #3f37c9;
+            line-height: 1.2;
+        }
+
+        /* Answer input row */
+        .answer-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #negate-btn {
+            font-size: 1.5rem;
+            width: 52px;
+            height: 52px;
+            padding: 0;
+            border-radius: 12px;
+            background: #6366f1;
+            box-shadow: none;
+            flex-shrink: 0;
             line-height: 1;
         }
 
-        /* Answer input */
+        #negate-btn:hover { background: #4f46e5; }
+
         #answer-input {
-            font-size: 2.8rem;
-            width: 180px;
+            font-size: 2.5rem;
+            width: 160px;
             text-align: center;
             border: 3px solid #ced4da;
             border-radius: 14px;
@@ -281,7 +301,7 @@
             padding: 10px 15px;
             border-radius: 8px;
             font-weight: bold;
-            box-shadow: 0 2px 8px rgba(114,9,183,0.3);
+            box-shadow: 0 2px 8px rgba(220,38,38,0.3);
         }
 
         .desktop-text { display: inline; }
@@ -307,8 +327,8 @@
             #main-area { width: 100vw; padding: 10px; }
             #card { width: 95%; padding: 20px 14px 18px; }
 
-            #problem      { font-size: 3.5rem !important; margin-bottom: 10px; }
-            #answer-input { font-size: 2rem; width: 150px; }
+            #problem      { font-size: 2.4rem !important; margin-bottom: 10px; }
+            #answer-input { font-size: 2rem; width: 130px; }
             #submit-btn   { padding: 10px 28px; font-size: 1rem; }
             #feedback     { font-size: 1rem; }
 
@@ -373,10 +393,7 @@
             letter-spacing: 1px;
             white-space: nowrap;
         }
-        .streak-segments {
-            display: flex;
-            gap: 6px;
-        }
+        .streak-segments { display: flex; gap: 6px; }
         .streak-seg {
             width: 36px;
             height: 14px;
@@ -389,9 +406,9 @@
             animation: throb 1.3s ease-in-out infinite;
         }
         @keyframes throb {
-            0%   { transform: scale(1);    box-shadow: 0 0 0 rgba(114,9,183,0); }
-            50%  { transform: scale(1.12); box-shadow: 0 0 10px rgba(114,9,183,0.45); }
-            100% { transform: scale(1);    box-shadow: 0 0 0 rgba(114,9,183,0); }
+            0%   { transform: scale(1);    box-shadow: 0 0 0 rgba(220,38,38,0); }
+            50%  { transform: scale(1.12); box-shadow: 0 0 10px rgba(220,38,38,0.45); }
+            100% { transform: scale(1);    box-shadow: 0 0 0 rgba(220,38,38,0); }
         }
         .streak-count-label {
             font-size: 0.75rem;
@@ -426,41 +443,13 @@
             from { transform: scale(0.7); opacity: 0; }
             to   { transform: scale(1);   opacity: 1; }
         }
-        #tetris-modal-card h3 {
-            font-size: 1.5rem;
-            margin: 0 0 8px;
-            color: var(--accent-color);
-        }
-        #tetris-modal-card p {
-            font-size: 1rem;
-            color: var(--text-main);
-            margin: 0 0 24px;
-            line-height: 1.5;
-        }
-        .modal-btns {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-        .modal-btns button {
-            padding: 12px 32px;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-        .modal-btn-yes {
-            background: linear-gradient(135deg, var(--accent-color), #f59e0b);
-            color: white;
-            box-shadow: 0 4px 12px rgba(114,9,183,0.3);
-        }
+        #tetris-modal-card h3 { font-size: 1.5rem; margin: 0 0 8px; color: var(--accent-color); }
+        #tetris-modal-card p  { font-size: 1rem; color: var(--text-main); margin: 0 0 24px; line-height: 1.5; }
+        .modal-btns { display: flex; gap: 12px; justify-content: center; }
+        .modal-btns button { padding: 12px 32px; border-radius: 14px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
+        .modal-btn-yes { background: linear-gradient(135deg, var(--accent-color), #f59e0b); color: white; box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
         .modal-btn-yes:hover { filter: brightness(1.1); }
-        .modal-btn-no {
-            background: #e9ecef;
-            color: var(--text-main);
-            box-shadow: none;
-        }
+        .modal-btn-no  { background: #e9ecef; color: var(--text-main); box-shadow: none; }
         .modal-btn-no:hover { background: #dee2e6; }
 
         /* ---- TETRIS IFRAME OVERLAY ---- */
@@ -486,56 +475,13 @@
             background: #1a1a2e;
             flex-shrink: 0;
         }
-        #tetris-timer-bar span {
-            color: #f59e0b;
-            font-size: 1.1rem;
-            font-weight: 800;
-            font-family: 'Segoe UI', monospace;
-        }
-        #tetris-timer-progress {
-            flex: 1;
-            max-width: 320px;
-            height: 8px;
-            background: #333;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        #tetris-timer-fill {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, var(--accent-color), #f59e0b);
-            border-radius: 4px;
-            transition: width 1s linear;
-        }
-        #tetris-close-btn {
-            padding: 8px 18px;
-            background: var(--wrong-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: none;
-        }
+        #tetris-timer-bar span { color: #f59e0b; font-size: 1.1rem; font-weight: 800; font-family: 'Segoe UI', monospace; }
+        #tetris-timer-progress { flex: 1; max-width: 320px; height: 8px; background: #333; border-radius: 4px; overflow: hidden; }
+        #tetris-timer-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); border-radius: 4px; transition: width 1s linear; }
+        #tetris-close-btn { padding: 8px 18px; background: var(--wrong-color); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; box-shadow: none; }
         #tetris-close-btn:hover { background: #c1121f; }
-        #tetris-iframe-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            overflow: hidden;
-        }
-        #tetris-iframe {
-            border: none;
-            width: 520px;
-            height: 700px;
-            max-width: 100vw;
-            max-height: calc(100vh - 50px);
-            border-radius: 0;
-            background: #000;
-        }
+        #tetris-iframe-wrap { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; }
+        #tetris-iframe { border: none; width: 520px; height: 700px; max-width: 100vw; max-height: calc(100vh - 50px); background: #000; }
 
         @media (max-width: 768px) {
             .streak-seg { width: 28px; height: 12px; }
@@ -551,41 +497,54 @@
     <button id="menu-toggle">&#9776; Settings</button>
 
     <div id="sidebar">
-        <h2>Math Settings</h2>
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="allSame">
-            <label for="allSame">Practice Squares / Cubes<br><small>(All numbers will be same)</small></label>
-        </div>
-
-        <hr style="width:100%; border: 0.5px solid #eee;">
+        <h2>&#8722; Negative Numbers</h2>
 
         <div class="input-group">
-            <label>Number 1 (Min - Max)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" id="min1" value="2" style="width:50%">
-                <input type="number" id="max1" value="12" style="width:50%">
+            <label>Operations to Practice</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-add" checked>
+                <label for="op-add">Addition (+)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-sub" checked>
+                <label for="op-sub">Subtraction (&#8722;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-mul">
+                <label for="op-mul">Multiplication (&#215;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-div">
+                <label for="op-div">Division (&#247;)</label>
             </div>
         </div>
 
-        <div class="input-group" id="group2">
-            <label>Number 2 (Min - Max)</label>
+        <div class="input-group">
+            <label>Number 1 (Min – Max)</label>
             <div style="display:flex; gap:5px;">
-                <input type="number" id="min2" value="2" style="width:50%">
-                <input type="number" id="max2" value="12" style="width:50%">
+                <input type="number" id="min1" value="-10" style="width:50%">
+                <input type="number" id="max1" value="10"  style="width:50%">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Number 2 (Min – Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min2" value="-10" style="width:50%">
+                <input type="number" id="max2" value="10"  style="width:50%">
             </div>
         </div>
 
         <div class="checkbox-group">
             <input type="checkbox" id="enable3rd" onchange="toggle3rd()">
-            <label for="enable3rd">Add 3rd Number</label>
+            <label for="enable3rd">Add 3rd Number<br><small>(not used for ÷)</small></label>
         </div>
 
         <div class="input-group" id="group3" style="display:none;">
-            <label>Number 3 (Min - Max)</label>
+            <label>Number 3 (Min – Max)</label>
             <div style="display:flex; gap:5px;">
-                <input type="number" id="min3" value="2" style="width:50%">
-                <input type="number" id="max3" value="5" style="width:50%">
+                <input type="number" id="min3" value="-5" style="width:50%">
+                <input type="number" id="max3" value="5"  style="width:50%">
             </div>
         </div>
 
@@ -599,17 +558,18 @@
     </div>
 
     <div id="main-area">
-
         <div id="card">
             <div id="q-counter">Question #1</div>
             <p id="problem">--</p>
-            <input
-                type="number"
-                id="answer-input"
-                placeholder="?"
-                autocomplete="off"
-                inputmode="numeric"
-            >
+            <div class="answer-row">
+                <button id="negate-btn" type="button" onclick="negateAnswer()" title="Toggle negative sign">&#177;</button>
+                <input
+                    type="number"
+                    id="answer-input"
+                    placeholder="?"
+                    autocomplete="off"
+                >
+            </div>
             <button id="submit-btn" onclick="submitAnswer()">Submit &#10003;</button>
             <div id="feedback"></div>
         </div>
@@ -650,16 +610,15 @@
             <div class="stat-divider"></div>
             <button id="reset-stats-btn" onclick="resetStats()">Reset Stats</button>
         </div>
-
     </div>
 
     <!-- Tetris Reward Modal -->
     <div id="tetris-modal-backdrop">
         <div id="tetris-modal-card">
-            <h3>🎉 Congratulations!</h3>
-            <p>You've completed <strong>5 streak milestones</strong>! You've earned a lucky <strong>1-minute Tetris break</strong>.<br>Would you like to play?</p>
+            <h3>&#127881; Amazing!</h3>
+            <p>You've completed <strong>5 streak milestones</strong>! You've earned a <strong>2-minute Tetris break</strong>.<br>Would you like to play?</p>
             <div class="modal-btns">
-                <button class="modal-btn-yes" onclick="acceptTetris()">Yes, let's play! 🎮</button>
+                <button class="modal-btn-yes" onclick="acceptTetris()">Yes, let's play! &#127918;</button>
                 <button class="modal-btn-no" onclick="declineTetris()">No thanks</button>
             </div>
         </div>
@@ -668,39 +627,35 @@
     <!-- Tetris Iframe Overlay -->
     <div id="tetris-overlay">
         <div id="tetris-timer-bar">
-            <span id="tetris-timer-text">1:00</span>
+            <span id="tetris-timer-text">2:00</span>
             <div id="tetris-timer-progress">
                 <div id="tetris-timer-fill"></div>
             </div>
-            <button id="tetris-close-btn" onclick="closeTetris()">✕ Close</button>
+            <button id="tetris-close-btn" onclick="closeTetris()">&#10005; Close</button>
         </div>
-        <div id="tetris-iframe-wrap">
-            <!-- iframe injected dynamically -->
-        </div>
+        <div id="tetris-iframe-wrap"></div>
     </div>
 
     <script>
     // ============================================================
-    // PERSISTENCE  (localStorage — survives page reloads)
-    // Level rule: every 10 correct answers = +1 level
+    // PERSISTENCE
     // ============================================================
-    const STORAGE_KEY = 'multigame_stats_v1';
-
-    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 }; // persisted stats
+    const STORAGE_KEY = 'negatives_stats_v1';
+    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
 
     function loadStats() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
             if (raw) {
                 const saved = JSON.parse(raw);
-                ps.totalQuestions  = saved.totalQuestions  || 0;
-                ps.correctAnswers  = saved.correctAnswers  || 0;
-                ps.level           = saved.level           || 1;
+                ps.totalQuestions   = saved.totalQuestions  || 0;
+                ps.correctAnswers   = saved.correctAnswers  || 0;
+                ps.level            = saved.level           || 1;
                 sessionHistory      = saved.sessionHistory  || [];
                 sessionHistoryCount = sessionHistory.length;
                 qCount              = sessionHistoryCount + 1;
             }
-        } catch (e) { /* ignore */ }
+        } catch(e) {}
         renderStats();
         updateHistoryLink();
     }
@@ -710,7 +665,7 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(
                 Object.assign({}, ps, { sessionHistory: sessionHistory })
             ));
-        } catch (e) { /* ignore */ }
+        } catch(e) {}
     }
 
     function recalcLevel() {
@@ -745,8 +700,6 @@
     let qCount              = 1;
     let sessionHistory      = [];
     let sessionHistoryCount = 0;
-
-    // Streak milestone tracking
     let streakMilestones    = 0;
     let tetrisUsed          = false;
     let tetrisTimerId       = null;
@@ -758,53 +711,106 @@
     const cardEl      = document.getElementById('card');
     const submitBtn   = document.getElementById('submit-btn');
 
+    // ============================================================
+    // PROBLEM GENERATION
+    // ============================================================
+    function randBetween(a, b) {
+        return Math.floor(Math.random() * (b - a + 1)) + a;
+    }
+
+    // Format: negatives shown as (−5), positives as plain 5
+    function fmt(n) {
+        if (n < 0) return '(\u2212' + Math.abs(n) + ')';
+        return String(n);
+    }
+
     function toggle3rd() {
         document.getElementById('group3').style.display =
             document.getElementById('enable3rd').checked ? 'flex' : 'none';
     }
 
-    function getRandomInt(min, max) {
-        min = parseInt(min, 10);
-        max = parseInt(max, 10);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function fireStreakConfetti(n) {
-        const toast = document.getElementById('streak-toast');
-        toast.textContent = '\uD83C\uDF89 ' + n + ' in a row!';
-        toast.classList.add('show');
-        if (typeof confetti === 'function') {
-            confetti({ particleCount: 160, spread: 80, origin: { y: 0.55 } });
-        }
-        setTimeout(function() { toast.classList.remove('show'); }, 2400);
+    function getEnabledOps() {
+        var ops = [];
+        if (document.getElementById('op-add').checked) ops.push('add');
+        if (document.getElementById('op-sub').checked) ops.push('sub');
+        if (document.getElementById('op-mul').checked) ops.push('mul');
+        if (document.getElementById('op-div').checked) ops.push('div');
+        return ops;
     }
 
     function generateProblem() {
-        const use3rd  = document.getElementById('enable3rd').checked;
-        const allSame = document.getElementById('allSame').checked;
+        var ops = getEnabledOps();
+        if (ops.length === 0) {
+            alert('Please select at least one operation.');
+            return;
+        }
+        var op     = ops[Math.floor(Math.random() * ops.length)];
+        var use3rd = document.getElementById('enable3rd').checked && op !== 'div';
 
-        const n1 = getRandomInt(
-            document.getElementById('min1').value,
-            document.getElementById('max1').value
-        );
-        const n2 = allSame ? n1 : getRandomInt(
-            document.getElementById('min2').value,
-            document.getElementById('max2').value
-        );
-        const n3 = use3rd
-            ? (allSame ? n1 : getRandomInt(
-                document.getElementById('min3').value,
-                document.getElementById('max3').value
-              ))
-            : null;
+        function getInt(id) { return parseInt(document.getElementById(id).value, 10) || 0; }
+        var min1 = getInt('min1'), max1 = getInt('max1');
+        var min2 = getInt('min2'), max2 = getInt('max2');
+        if (min1 > max1) { var _t1 = min1; min1 = max1; max1 = _t1; }
+        if (min2 > max2) { var _t2 = min2; min2 = max2; max2 = _t2; }
 
-        const expression = n3 !== null
-            ? `${n1} \u00D7 ${n2} \u00D7 ${n3}`
-            : `${n1} \u00D7 ${n2}`;
-        currentAnswer = n3 !== null ? n1 * n2 * n3 : n1 * n2;
+        function rand(mn, mx) {
+            return Math.floor(Math.random() * (mx - mn + 1)) + mn;
+        }
+        function randNZ(mn, mx) {
+            var v, tries = 0;
+            do { v = rand(mn, mx); tries++; } while (v === 0 && tries < 30);
+            if (v === 0) v = mn < 0 ? mn : (mx > 0 ? mx : 1);
+            return v;
+        }
 
-        problemEl.innerText       = expression;
-        problemEl.style.fontSize  = n3 !== null ? '5rem' : '6rem';
+        var n1, n2, n3, answer, display;
+
+        if (op === 'div') {
+            // Rejection-sample a pair (n1, n2) where n2 divides n1 exactly
+            var tries = 0;
+            do {
+                n1 = rand(min1, max1);
+                n2 = randNZ(min2, max2);
+                tries++;
+            } while (n1 % n2 !== 0 && tries < 40);
+            if (n1 % n2 !== 0) {
+                // Fallback: force a clean pair
+                n2 = randNZ(min2, max2);
+                var q = rand(-5, 5); if (q === 0) q = 1;
+                n1 = n2 * q;
+            }
+            answer  = n1 / n2;
+            display = fmt(n1) + ' \u00F7 ' + fmt(n2);
+
+        } else {
+            n1 = rand(min1, max1);
+            n2 = rand(min2, max2);
+            if (use3rd) {
+                var min3 = getInt('min3'), max3 = getInt('max3');
+                if (min3 > max3) { var _t3 = min3; min3 = max3; max3 = _t3; }
+                n3 = rand(min3, max3);
+            }
+            if (op === 'add') {
+                answer  = use3rd ? n1 + n2 + n3 : n1 + n2;
+                display = use3rd
+                    ? fmt(n1) + ' + ' + fmt(n2) + ' + ' + fmt(n3)
+                    : fmt(n1) + ' + ' + fmt(n2);
+            } else if (op === 'sub') {
+                answer  = use3rd ? n1 - n2 - n3 : n1 - n2;
+                display = use3rd
+                    ? fmt(n1) + ' \u2212 ' + fmt(n2) + ' \u2212 ' + fmt(n3)
+                    : fmt(n1) + ' \u2212 ' + fmt(n2);
+            } else { // mul
+                answer  = use3rd ? n1 * n2 * n3 : n1 * n2;
+                display = use3rd
+                    ? fmt(n1) + ' \u00D7 ' + fmt(n2) + ' \u00D7 ' + fmt(n3)
+                    : fmt(n1) + ' \u00D7 ' + fmt(n2);
+            }
+        }
+
+        currentAnswer             = answer;
+        problemEl.innerText       = display;
+        problemEl.style.fontSize  = use3rd ? '2.6rem' : '3.5rem';
         answerInput.value         = '';
         answerInput.disabled      = false;
         feedbackEl.innerText      = '';
@@ -812,26 +818,35 @@
         cardEl.className          = '';
         awaitingNext              = false;
         submitBtn.innerText       = 'Submit \u2713';
+        document.getElementById('q-counter').innerText = 'Question #' + qCount;
+        answerInput.focus();
+    }
 
-        document.getElementById('q-counter').innerText = `Question #${qCount}`;
+    function negateAnswer() {
+        var val = answerInput.value.trim();
+        if (val === '' || val === '-') {
+            answerInput.value = (val === '-') ? '' : '-';
+        } else {
+            var n = parseFloat(val);
+            if (!isNaN(n)) answerInput.value = String(-n);
+        }
         answerInput.focus();
     }
 
     function submitAnswer() {
-        // If already answered — advance to next question
         if (awaitingNext) {
             qCount++;
             generateProblem();
             return;
         }
 
-        const raw = answerInput.value.trim();
-        if (raw === '') { answerInput.focus(); return; }
-        const userAnswer = parseInt(raw, 10);
+        var raw = answerInput.value.trim();
+        if (raw === '' || raw === '-') { answerInput.focus(); return; }
+        var userAnswer = parseInt(raw, 10);
+        if (isNaN(userAnswer)) { answerInput.focus(); return; }
 
-        const isCorrect = userAnswer === currentAnswer;
+        var isCorrect = userAnswer === currentAnswer;
 
-        // Record in session history
         sessionHistory.push({
             no: qCount,
             prob: problemEl.innerText,
@@ -842,7 +857,6 @@
         sessionHistoryCount++;
         updateHistoryLink();
 
-        // Update persistent stats
         ps.totalQuestions++;
         if (isCorrect) {
             ps.correctAnswers++;
@@ -850,7 +864,7 @@
             feedbackEl.className = 'correct';
             cardEl.className     = 'correct';
         } else {
-            feedbackEl.innerText = `\u2717 Wrong \u2014 answer is ${currentAnswer}`;
+            feedbackEl.innerText = '\u2717 Wrong \u2014 answer is ' + currentAnswer;
             feedbackEl.className = 'wrong';
             cardEl.className     = 'wrong';
         }
@@ -859,12 +873,10 @@
             currentStreak++;
             if (currentStreak % 5 === 0) {
                 fireStreakConfetti(currentStreak);
-                // Award a streak milestone (only if Tetris not already used)
                 if (!tetrisUsed) {
                     streakMilestones++;
                     updateStreakBar();
                     if (streakMilestones >= 5) {
-                        // Delay modal slightly so confetti plays first
                         setTimeout(showTetrisModal, 1200);
                     }
                 }
@@ -886,30 +898,36 @@
     function newGame() {
         qCount = 1;
         currentStreak = 0;
-        // Keep streakMilestones and tetrisUsed intact across new games
         generateProblem();
     }
 
     // ============================================================
-    // STREAK PROGRESS BAR
+    // STREAK CONFETTI + PROGRESS BAR
     // ============================================================
+    function fireStreakConfetti(n) {
+        var toast = document.getElementById('streak-toast');
+        toast.textContent = '\uD83C\uDF89 ' + n + ' in a row!';
+        toast.classList.add('show');
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 160, spread: 80, origin: { y: 0.55 } });
+        }
+        setTimeout(function() { toast.classList.remove('show'); }, 2400);
+    }
+
     function updateStreakBar() {
         var bar = document.getElementById('streak-progress');
         if (tetrisUsed) { bar.classList.add('hidden'); return; }
         bar.classList.remove('hidden');
         for (var i = 1; i <= 5; i++) {
             var seg = document.getElementById('seg-' + i);
-            if (i <= streakMilestones) {
-                seg.classList.add('filled');
-            } else {
-                seg.classList.remove('filled');
-            }
+            if (i <= streakMilestones) seg.classList.add('filled');
+            else seg.classList.remove('filled');
         }
         document.getElementById('streak-count-label').textContent = streakMilestones + '/5';
     }
 
     // ============================================================
-    // TETRIS REWARD MODAL
+    // TETRIS REWARD
     // ============================================================
     function showTetrisModal() {
         document.getElementById('tetris-modal-backdrop').classList.add('show');
@@ -928,37 +946,25 @@
         updateStreakBar();
     }
 
-    // ============================================================
-    // TETRIS IFRAME + COUNTDOWN
-    // ============================================================
     function launchTetris() {
-        // Enter fullscreen
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(function() {});
         }
-
-        var overlay = document.getElementById('tetris-overlay');
-        var wrap    = document.getElementById('tetris-iframe-wrap');
-
-        // Create iframe
-        var iframe     = document.createElement('iframe');
-        iframe.id      = 'tetris-iframe';
-        iframe.src     = 'tetris2/index.html';
+        var wrap   = document.getElementById('tetris-iframe-wrap');
+        var iframe = document.createElement('iframe');
+        iframe.id  = 'tetris-iframe';
+        iframe.src = 'tetris2/index.html';
         iframe.setAttribute('allowfullscreen', '');
         wrap.innerHTML = '';
         wrap.appendChild(iframe);
+        document.getElementById('tetris-overlay').classList.add('show');
 
-        overlay.classList.add('show');
-
-        // Start 5-minute countdown
-        tetrisSecondsLeft = 60;
+        tetrisSecondsLeft = 120; // 2 minutes
         updateTetrisTimer();
         tetrisTimerId = setInterval(function() {
             tetrisSecondsLeft--;
             updateTetrisTimer();
-            if (tetrisSecondsLeft <= 0) {
-                closeTetris();
-            }
+            if (tetrisSecondsLeft <= 0) closeTetris();
         }, 1000);
     }
 
@@ -967,34 +973,24 @@
         var s = tetrisSecondsLeft % 60;
         document.getElementById('tetris-timer-text').textContent =
             m + ':' + (s < 10 ? '0' : '') + s;
-        var pct = (tetrisSecondsLeft / 60) * 100;
+        var pct = (tetrisSecondsLeft / 120) * 100;
         document.getElementById('tetris-timer-fill').style.width = pct + '%';
     }
 
     function closeTetris() {
-        // Stop timer
         if (tetrisTimerId) { clearInterval(tetrisTimerId); tetrisTimerId = null; }
-
-        // Destroy iframe
-        var wrap = document.getElementById('tetris-iframe-wrap');
-        wrap.innerHTML = '';
-
-        // Hide overlay
+        document.getElementById('tetris-iframe-wrap').innerHTML = '';
         document.getElementById('tetris-overlay').classList.remove('show');
-
-        // Exit fullscreen
         if (document.fullscreenElement) {
             document.exitFullscreen().catch(function() {});
         }
-
-        // Nullify streaks & mark as used
-        tetrisUsed       = true;
+        tetrisUsed = true;
         streakMilestones = 0;
         currentStreak    = 0;
         updateStreakBar();
     }
 
-    // Enter key: submit or advance
+    // Key bindings
     answerInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
     });
@@ -1003,21 +999,21 @@
     });
 
     // ============================================================
-    // SESSION HISTORY POPUP
+    // SESSION HISTORY
     // ============================================================
     function updateHistoryLink() {
         document.getElementById('history-link').innerText =
-            `\u{1F4DC} View Session History (${sessionHistoryCount})`;
+            '\uD83D\uDCDC View Session History (' + sessionHistoryCount + ')';
     }
 
     document.getElementById('history-link').addEventListener('click', function(e) {
         e.preventDefault();
         if (sessionHistory.length === 0) { alert('No questions answered yet!'); return; }
-        let report = `Session History \u2014 ${sessionHistory.length} question(s)\n\n`;
+        var report = 'Session History \u2014 ' + sessionHistory.length + ' question(s)\n\n';
         sessionHistory.forEach(function(item) {
-            const mark = item.correct ? '\u2713' : '\u2717';
-            report += `${mark}  Q${item.no}: ${item.prob} = ${item.ans}`;
-            if (!item.correct) report += `  (you entered: ${item.userAns})`;
+            var mark = item.correct ? '\u2713' : '\u2717';
+            report += mark + '  Q' + item.no + ': ' + item.prob + ' = ' + item.ans;
+            if (!item.correct) report += '  (you entered: ' + item.userAns + ')';
             report += '\n';
         });
         alert(report);
@@ -1027,33 +1023,30 @@
     // NAV ICONS
     // ============================================================
     (function() {
-        const nav = document.createElement('div');
+        var nav = document.createElement('div');
         nav.id = 'nav-icons';
 
-        function makeLink(href, html, title, bgColor) {
-            const a = document.createElement('a');
+        function makeLink(href, html, title, bg) {
+            var a = document.createElement('a');
             a.href = href;
             a.innerHTML = html;
             a.title = title;
-            if (bgColor) a.style.background = bgColor;
+            if (bg) a.style.background = bg;
             return a;
         }
 
         nav.appendChild(makeLink('index.html',
-            '\u{1F3E0}<span class="nav-text"> Home</span>', 'Home'));
-
+            '\uD83C\uDFE0<span class="nav-text"> Home</span>', 'Home'));
         nav.appendChild(makeLink('about.html',
             '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
-
         nav.appendChild(makeLink('donate.html',
             '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
             'Support with a coffee', 'rgba(255,165,0,0.9)'));
-
         nav.appendChild(makeLink('donate_usd.html',
             '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
             'International support', 'rgba(34,197,94,0.9)'));
 
-        const fsBtn = document.createElement('button');
+        var fsBtn = document.createElement('button');
         fsBtn.className = 'nav-btn';
         fsBtn.title     = 'Toggle Full Screen';
         fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
@@ -1067,7 +1060,6 @@
             }
         };
         nav.appendChild(fsBtn);
-
         document.body.appendChild(nav);
     })();
 
@@ -1075,8 +1067,8 @@
     // MOBILE SIDEBAR TOGGLE
     // ============================================================
     (function() {
-        const toggleBtn = document.getElementById('menu-toggle');
-        const sidebar   = document.getElementById('sidebar');
+        var toggleBtn = document.getElementById('menu-toggle');
+        var sidebar   = document.getElementById('sidebar');
 
         toggleBtn.onclick = function(e) {
             e.stopPropagation();

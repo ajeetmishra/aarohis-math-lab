@@ -79,6 +79,7 @@
         .card.pink { border-bottom: 8px solid #f472b6; }
         .card.indigo { border-bottom: 8px solid #6366f1; }
         .card.teal { border-bottom: 8px solid #2dd4bf; }
+        .card.red  { border-bottom: 8px solid #f87171; }
         
         /* Mobile responsive text - hide mobile text by default on desktop */
         .mobile-text { display: none; }
@@ -152,12 +153,14 @@
         .mode-card.teal    { border-bottom: 6px solid #2dd4bf; }
         .mode-card.pink    { border-bottom: 6px solid #f472b6; }
         .mode-card.orange  { border-bottom: 6px solid #fb923c; }
+        .mode-card.red     { border-bottom: 6px solid #f87171; }
         .mode-card.indigo .mc-btn  { background: #6366f1; color: white; }
         .mode-card.purple .mc-btn  { background: #a855f7; color: white; }
         .mode-card.green .mc-btn   { background: #16a34a; color: white; }
         .mode-card.teal .mc-btn    { background: #0d9488; color: white; }
         .mode-card.pink .mc-btn    { background: #db2777; color: white; }
         .mode-card.orange .mc-btn  { background: #ea580c; color: white; }
+        .mode-card.red .mc-btn     { background: #dc2626; color: white; }
         .mode-card .mc-icon {
             font-size: 2.6rem;
             margin-bottom: 12px;
@@ -283,6 +286,12 @@
             <div class="desc">Translate between %, Fractions, and Decimals instantly.</div>
         </div>
 
+        <div class="card red" onclick="showModeChoice('negatives')">
+            <span class="icon">➖</span>
+            <div class="title">Negative Numbers</div>
+            <div class="desc">Add, subtract, multiply and divide with negative numbers.</div>
+        </div>
+
     </div>
 
     <!-- Generic Mode Chooser Overlay -->
@@ -322,7 +331,7 @@
                 },
                 quiz: {
                     url: 'multiplication_game.html', colorClass: 'purple', icon: '🎯', title: 'Quiz',
-                    benefits: ['Type the answer to reinforce memory', 'Tracks score, correct answers &amp; level', 'Level up every 10 correct answers', 'Full history saved across sessions']
+                    benefits: ['Type the answer to reinforce memory', 'Tracks score, correct answers &amp; level', 'Level up every 10 correct answers', '🎮 Earn a 1-min Tetris break (5×5 streaks!)']
                 }
             },
             fractions: {
@@ -334,7 +343,7 @@
                 },
                 quiz: {
                     url: 'fractions_game.html', colorClass: 'teal', icon: '🎯', title: 'Quiz',
-                    benefits: ['Type the answer (e.g. "3/4")', 'Scored with level progression', 'Checks your simplified answer', 'History saved across sessions']
+                    benefits: ['Type the answer (e.g. "3/4")', 'Scored with level progression', 'Checks your simplified answer', '🎮 Earn a 3-min Tetris break (5×5 streaks!)']
                 }
             },
             converter: {
@@ -358,7 +367,19 @@
                 },
                 quiz: {
                     url: 'fast_track_game.html', colorClass: 'indigo', icon: '🎯', title: 'Quiz',
-                    benefits: ['Type your answer (50%, 1/2, or 0.5)', 'Accepts any equivalent format', 'Scored with level progression', 'History saved across sessions']
+                    benefits: ['Type your answer (50%, 1/2, or 0.5)', 'Accepts any equivalent format', 'Scored with level progression', '🎮 Earn a 5-min Tetris break (5×5 streaks!)']
+                }
+            },
+            negatives: {
+                title: '➖ Choose Your Mode',
+                sub: 'Both modes cover addition, subtraction, multiplication &amp; division with negatives.',
+                flash: {
+                    url: 'negatives.html', colorClass: 'pink', icon: '⚡', title: 'Flashcards',
+                    benefits: ['Reveal-answer style — no typing', 'All four operations with negatives', 'Parenthesis notation: (−5) + 3', 'Great for building intuition']
+                },
+                quiz: {
+                    url: 'negatives_game.html', colorClass: 'orange', icon: '🎯', title: 'Quiz',
+                    benefits: ['Type the answer (supports negatives)', 'Use ± button to negate on mobile', 'Scored with level progression', '🎮 Earn a 2-min Tetris break (5×5 streaks!)']
                 }
             }
         };

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Negative Numbers Flashcards</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #dc2626;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --correct-color: #38b000;
+        }
+
+        /* ---- RESPONSIVE MOBILE-FIRST OVERRIDES ---- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; }
+
+            #sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0; bottom: 0;
+                width: 80%;
+                transition: 0.3s ease;
+                z-index: 2000;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            }
+
+            #sidebar.open { left: 0; }
+
+            #main-area { width: 100vw; height: 100vh; padding: 10px; }
+
+            #card {
+                width: 95%;
+                height: 70vh;
+                margin-top: 50px;
+            }
+
+            #menu-toggle {
+                display: block !important;
+                position: fixed;
+                top: 15px; left: 15px;
+                z-index: 3000;
+                background: var(--accent-color);
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 8px;
+                font-weight: bold;
+            }
+
+            #problem { font-size: 2.8rem !important; }
+            #answer  { font-size: 2.8rem !important; }
+
+            .desktop-text { display: none !important; }
+            .mobile-text  { display: inline !important; }
+
+            #nav-icons {
+                right: 15px !important;
+                top: 15px !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 5px !important;
+            }
+
+            #nav-icons a, #nav-icons button {
+                padding: 8px 10px !important;
+                font-size: 0.8rem !important;
+            }
+        }
+
+        #menu-toggle { display: none; }
+
+        @media (max-width: 480px) {
+            .nav-text { display: none !important; }
+        }
+
+        .mobile-text  { display: none; }
+        .desktop-text { display: inline; }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- SIDEBAR ---- */
+        #sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+        }
+
+        button:hover { background-color: #b91c1c; }
+        button:active { transform: translateY(2px); }
+
+        /* ---- MAIN AREA ---- */
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        #card {
+            background: var(--card-bg);
+            width: 85%;
+            max-width: 700px;
+            max-height: 85vh;
+            height: auto;
+            min-height: 320px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid white;
+            padding: 30px 20px;
+        }
+
+        #q-counter-display {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        #problem {
+            font-size: 4rem;
+            margin: 0;
+            font-weight: 900;
+            color: #3f37c9;
+            line-height: 1.2;
+        }
+
+        #answer {
+            font-size: 4rem;
+            color: var(--correct-color);
+            margin-top: 24px;
+            font-weight: 800;
+            visibility: hidden;
+            min-height: 1.2em;
+        }
+
+        #answer.visible { visibility: visible; }
+
+        .instructions {
+            position: absolute;
+            bottom: 30px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        kbd {
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>&#8722; Negative Numbers</h2>
+
+        <div class="input-group">
+            <label>Operations to Practice</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-add" checked>
+                <label for="op-add">Addition (+)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-sub" checked>
+                <label for="op-sub">Subtraction (&#8722;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-mul">
+                <label for="op-mul">Multiplication (&#215;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-div">
+                <label for="op-div">Division (&#247;)</label>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Number 1 (Min – Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min1" value="-10" style="width:50%">
+                <input type="number" id="max1" value="10"  style="width:50%">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Number 2 (Min – Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min2" value="-10" style="width:50%">
+                <input type="number" id="max2" value="10"  style="width:50%">
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="enable3rd" onchange="toggle3rd()">
+            <label for="enable3rd">Add 3rd Number<br><small>(not used for ÷)</small></label>
+        </div>
+
+        <div class="input-group" id="group3" style="display:none;">
+            <label>Number 3 (Min – Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min3" value="-5" style="width:50%">
+                <input type="number" id="max3" value="5"  style="width:50%">
+            </div>
+        </div>
+
+        <button onclick="newGame()">Start Practice</button>
+
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto; line-height: 1.4;">
+            Use <kbd>&#8595;</kbd> to reveal answer.<br>
+            Use <kbd>&#8595;</kbd> again for next.
+        </p>
+    </div>
+
+    <div id="main-area">
+        <div id="card">
+            <p id="problem">--</p>
+            <p id="answer">--</p>
+        </div>
+        <div class="instructions">Press <b>DOWN ARROW</b> or tap <b>Next Step</b> to reveal</div>
+    </div>
+
+    <script>
+        var currentAnswer = null;
+        var answerVisible = false;
+
+        var problemEl = document.getElementById('problem');
+        var answerEl  = document.getElementById('answer');
+
+        // ============================================================
+        // PROBLEM GENERATION (same logic as game)
+        // ============================================================
+        function randBetween(a, b) {
+            return Math.floor(Math.random() * (b - a + 1)) + a;
+        }
+
+        function fmt(n) {
+            if (n < 0) return '(\u2212' + Math.abs(n) + ')';
+            return String(n);
+        }
+
+        function toggle3rd() {
+            document.getElementById('group3').style.display =
+                document.getElementById('enable3rd').checked ? 'flex' : 'none';
+        }
+
+        function getEnabledOps() {
+            var ops = [];
+            if (document.getElementById('op-add').checked) ops.push('add');
+            if (document.getElementById('op-sub').checked) ops.push('sub');
+            if (document.getElementById('op-mul').checked) ops.push('mul');
+            if (document.getElementById('op-div').checked) ops.push('div');
+            return ops;
+        }
+
+        function generateProblem() {
+            var ops = getEnabledOps();
+            if (ops.length === 0) {
+                alert('Please select at least one operation.');
+                return;
+            }
+            var op     = ops[Math.floor(Math.random() * ops.length)];
+            var use3rd = document.getElementById('enable3rd').checked && op !== 'div';
+
+            function getInt(id) { return parseInt(document.getElementById(id).value, 10) || 0; }
+            var min1 = getInt('min1'), max1 = getInt('max1');
+            var min2 = getInt('min2'), max2 = getInt('max2');
+            if (min1 > max1) { var _t1 = min1; min1 = max1; max1 = _t1; }
+            if (min2 > max2) { var _t2 = min2; min2 = max2; max2 = _t2; }
+
+            function rand(mn, mx) {
+                return Math.floor(Math.random() * (mx - mn + 1)) + mn;
+            }
+            function randNZ(mn, mx) {
+                var v, tries = 0;
+                do { v = rand(mn, mx); tries++; } while (v === 0 && tries < 30);
+                if (v === 0) v = mn < 0 ? mn : (mx > 0 ? mx : 1);
+                return v;
+            }
+
+            var n1, n2, n3, answer, display;
+
+            if (op === 'div') {
+                var tries = 0;
+                do {
+                    n1 = rand(min1, max1);
+                    n2 = randNZ(min2, max2);
+                    tries++;
+                } while (n1 % n2 !== 0 && tries < 40);
+                if (n1 % n2 !== 0) {
+                    n2 = randNZ(min2, max2);
+                    var q = rand(-5, 5); if (q === 0) q = 1;
+                    n1 = n2 * q;
+                }
+                answer  = n1 / n2;
+                display = fmt(n1) + ' \u00F7 ' + fmt(n2);
+
+            } else {
+                n1 = rand(min1, max1);
+                n2 = rand(min2, max2);
+                if (use3rd) {
+                    var min3 = getInt('min3'), max3 = getInt('max3');
+                    if (min3 > max3) { var _t3 = min3; min3 = max3; max3 = _t3; }
+                    n3 = rand(min3, max3);
+                }
+                if (op === 'add') {
+                    answer  = use3rd ? n1 + n2 + n3 : n1 + n2;
+                    display = use3rd
+                        ? fmt(n1) + ' + ' + fmt(n2) + ' + ' + fmt(n3)
+                        : fmt(n1) + ' + ' + fmt(n2);
+                } else if (op === 'sub') {
+                    answer  = use3rd ? n1 - n2 - n3 : n1 - n2;
+                    display = use3rd
+                        ? fmt(n1) + ' \u2212 ' + fmt(n2) + ' \u2212 ' + fmt(n3)
+                        : fmt(n1) + ' \u2212 ' + fmt(n2);
+                } else { // mul
+                    answer  = use3rd ? n1 * n2 * n3 : n1 * n2;
+                    display = use3rd
+                        ? fmt(n1) + ' \u00D7 ' + fmt(n2) + ' \u00D7 ' + fmt(n3)
+                        : fmt(n1) + ' \u00D7 ' + fmt(n2);
+                }
+            }
+
+            currentAnswer        = answer;
+            problemEl.innerText  = display;
+            problemEl.style.fontSize = use3rd ? '2.6rem' : '4rem';
+            answerEl.innerText   = fmt(answer);
+            answerEl.classList.remove('visible');
+            answerVisible        = false;
+        }
+
+        function handleStep() {
+            if (!answerVisible) {
+                answerEl.classList.add('visible');
+                answerVisible = true;
+            } else {
+                generateProblem();
+            }
+        }
+
+        function newGame() {
+            generateProblem();
+        }
+
+        // ============================================================
+        // POWER-UP: Counter, History, Next-Step Button, Nav Icons
+        // ============================================================
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            var card    = document.getElementById('card');
+
+            // Question counter
+            var counterDiv = document.createElement('div');
+            counterDiv.id = 'q-counter-display';
+            counterDiv.style = 'font-size:1rem; font-weight:bold; color:#888; margin-bottom:10px;';
+            counterDiv.innerText = 'Question: #1';
+            card.prepend(counterDiv);
+
+            // History link in sidebar
+            var historyLink = document.createElement('a');
+            historyLink.id = 'history-link-main';
+            historyLink.style = 'margin-top:auto; font-size:0.85rem; color:var(--accent-color); text-decoration:underline; cursor:pointer; display:block; padding-top:20px;';
+            historyLink.innerText = '\uD83D\uDCDC View Session History (0)';
+            sidebar.appendChild(historyLink);
+
+            // Next Step button (floating, for tablet/touch)
+            var nextBtn = document.createElement('button');
+            nextBtn.style = 'position:fixed; bottom:30px; right:30px; padding:15px 40px; font-size:1.2rem; background:var(--accent-color); color:white; border:none; border-radius:50px; box-shadow:0 4px 15px rgba(0,0,0,0.2); cursor:pointer; z-index:1000;';
+            nextBtn.innerText = 'Next Step \u2794';
+            document.body.appendChild(nextBtn);
+
+            // State
+            var qCount = 1;
+            var sessionHistory = [];
+            var currentProblemCache = '';
+
+            window.masterStep = function() {
+                var probEl = document.getElementById('problem');
+                var ansEl  = document.getElementById('answer');
+                var isHidden = !ansEl.classList.contains('visible');
+
+                if (isHidden) {
+                    currentProblemCache = probEl.innerText;
+                    handleStep();
+                } else {
+                    sessionHistory.push({
+                        no: qCount,
+                        prob: currentProblemCache,
+                        ans: ansEl.innerText
+                    });
+                    historyLink.innerText = '\uD83D\uDCDC View Session History (' + sessionHistory.length + ')';
+                    handleStep();
+                    qCount++;
+                    counterDiv.innerText = 'Question: #' + qCount;
+                }
+            };
+
+            // Down arrow key
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown') { e.preventDefault(); window.masterStep(); }
+            }, true);
+
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.masterStep();
+            });
+
+            historyLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (sessionHistory.length === 0) { alert('No questions completed yet!'); return; }
+                var report = '--- Session History (Total: ' + sessionHistory.length + ') ---\n\n';
+                sessionHistory.forEach(function(item) {
+                    report += 'Q' + item.no + ': ' + item.prob + ' = ' + item.ans + '\n';
+                });
+                alert(report);
+            });
+        })();
+
+        // Mobile sidebar toggle
+        (function() {
+            var toggleBtn = document.createElement('button');
+            toggleBtn.id = 'menu-toggle';
+            toggleBtn.innerHTML = '&#9776; Settings';
+            document.body.prepend(toggleBtn);
+
+            var sidebar = document.getElementById('sidebar');
+
+            toggleBtn.onclick = function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+                toggleBtn.innerHTML = sidebar.classList.contains('open') ? '\u2715 Close' : '\u2630 Settings';
+            };
+
+            document.getElementById('main-area').onclick = function() {
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    toggleBtn.innerHTML = '\u2630 Settings';
+                }
+            };
+        })();
+
+        // Nav icons + fullscreen
+        (function() {
+            var navIcons = document.createElement('div');
+            navIcons.id = 'nav-icons';
+            navIcons.style = 'position:fixed; top:15px; right:250px; z-index:4000; display:flex; gap:10px;';
+
+            function makeLink(href, html, title, bg) {
+                var a = document.createElement('a');
+                a.href = href;
+                a.style = 'display:block; padding:10px 15px; background:' + (bg || 'rgba(0,0,0,0.5)') + '; color:white; border:none; border-radius:8px; font-size:0.9rem; text-decoration:none; cursor:pointer;';
+                a.innerHTML = html;
+                a.title = title;
+                return a;
+            }
+
+            navIcons.appendChild(makeLink('index.html',
+                '\uD83C\uDFE0<span class="nav-text"> Home</span>', 'Home'));
+            navIcons.appendChild(makeLink('about.html',
+                '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
+            navIcons.appendChild(makeLink('donate.html',
+                '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
+                'Support with a coffee', 'rgba(255,165,0,0.9)'));
+            navIcons.appendChild(makeLink('donate_usd.html',
+                '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
+                'International support', 'rgba(34,197,94,0.9)'));
+
+            var fsBtn = document.createElement('button');
+            fsBtn.id = 'fs-toggle';
+            fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+            fsBtn.style = 'display:block; padding:10px 15px; background:rgba(0,0,0,0.5); color:white; border:none; border-radius:8px; font-size:0.9rem; cursor:pointer;';
+            fsBtn.onclick = function() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(function() {});
+                    fsBtn.innerHTML = '<span class="desktop-text">\u2715 Exit Full Screen</span><span class="mobile-text">\u2715</span>';
+                } else {
+                    document.exitFullscreen();
+                    fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+                }
+            };
+            navIcons.appendChild(fsBtn);
+            document.body.appendChild(navIcons);
+        })();
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        generateProblem();
+    </script>
+</body>
+</html>
