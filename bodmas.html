@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BODMAS Flashcards</title>
+    <style>
+        /* ---- MOBILE-FIRST OVERRIDES ---- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; }
+            #sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0; bottom: 0;
+                width: 80%;
+                transition: 0.3s ease;
+                z-index: 2000;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            }
+            #sidebar.open { left: 0; }
+            #main-area { width: 100vw; height: 100vh; padding: 10px; }
+            #card { width: 95%; height: auto; min-height: 60vh; margin-top: 50px; }
+            #menu-toggle { display: block !important; }
+            #problem      { font-size: 2.6rem !important; }
+            #step-display { font-size: 1.4rem !important; }
+            #final-answer { font-size: 2.6rem !important; }
+            .desktop-text { display: none !important; }
+            .mobile-text  { display: inline !important; }
+            #nav-icons { right: 15px !important; top: 15px !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 5px !important; }
+            #nav-icons a, #nav-icons button { padding: 8px 10px !important; font-size: 0.8rem !important; }
+        }
+
+        #menu-toggle { display: none; }
+
+        @media (max-width: 480px) {
+            .nav-text { display: none !important; }
+        }
+
+        .mobile-text { display: none; }
+        .desktop-text { display: inline; }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #d97706;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --correct-color: #38b000;
+            --highlight-bg: #fef3c7;
+            --highlight-border: #fbbf24;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- SIDEBAR ---- */
+        #sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(217,119,6,0.25);
+        }
+
+        button:hover { background-color: #b45309; }
+        button:active { transform: translateY(2px); }
+
+        /* ---- MOBILE TOGGLE ---- */
+        #menu-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 3000;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(217,119,6,0.35);
+        }
+
+        /* ---- MAIN AREA ---- */
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        /* ---- CARD ---- */
+        #card {
+            background: var(--card-bg);
+            width: 85%;
+            max-width: 700px;
+            min-height: 340px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid white;
+            padding: 28px 24px;
+            gap: 16px;
+        }
+
+        #q-counter-display {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        #problem {
+            font-size: 3.8rem;
+            font-weight: 900;
+            color: #3f37c9;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        #step-display {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--text-main);
+            visibility: hidden;
+            min-height: 2.2rem;
+            line-height: 1.3;
+        }
+
+        #step-display .highlight {
+            background: var(--highlight-bg);
+            border: 2px solid var(--highlight-border);
+            border-radius: 8px;
+            padding: 2px 8px;
+            color: #92400e;
+        }
+
+        #final-answer {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--correct-color);
+            visibility: hidden;
+            min-height: 1.2em;
+            line-height: 1;
+        }
+
+        .instructions {
+            position: absolute;
+            bottom: 28px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        kbd {
+            background: #333;
+            color: white;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+
+        /* ---- NAV ICONS ---- */
+        #nav-icons {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 4000;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        #nav-icons a, #nav-icons .nav-btn {
+            display: block;
+            padding: 9px 14px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: normal;
+            box-shadow: none;
+        }
+
+        #nav-icons a:hover, #nav-icons .nav-btn:hover { background: rgba(0,0,0,0.7); }
+    </style>
+</head>
+<body>
+
+    <button id="menu-toggle">&#9776; Settings</button>
+
+    <div id="sidebar">
+        <h2>&#129518; BODMAS Order</h2>
+
+        <div class="input-group">
+            <label>Operations to Include</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-add" checked>
+                <label for="op-add">Addition (+)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-sub" checked>
+                <label for="op-sub">Subtraction (&#8722;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-mul" checked>
+                <label for="op-mul">Multiplication (&#215;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-div" checked>
+                <label for="op-div">Division (&#247;)</label>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Number Range (Min &#8211; Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min-num" value="2" style="width:50%">
+                <input type="number" id="max-num" value="9" style="width:50%">
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="enable3op" onchange="toggle3op()">
+            <label for="enable3op">Add 3rd operation<br><small>(4-term expressions)</small></label>
+        </div>
+
+        <div id="group3op" style="display:none;">
+            <div class="input-group">
+                <label style="color:#d97706;">&#128712; Uses same number range above</label>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="use-brackets">
+            <label for="use-brackets">Include Brackets</label>
+        </div>
+
+        <button onclick="newGame()">Start Practice</button>
+
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto; line-height: 1.6;">
+            Use <kbd>&#8595;</kbd> to reveal step.<br>
+            <kbd>&#8595;</kbd> again for answer.<br>
+            <kbd>&#8595;</kbd> again for next.
+        </p>
+    </div>
+
+    <div id="main-area">
+        <div id="card">
+            <div id="q-counter-display">Question: #1</div>
+            <p id="problem">--</p>
+            <div id="step-display">&nbsp;</div>
+            <div id="final-answer">&nbsp;</div>
+        </div>
+        <div class="instructions">Press <b>DOWN ARROW</b> or the button to step through</div>
+    </div>
+
+    <script>
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function randInt(mn, mx) {
+        return Math.floor(Math.random() * (mx - mn + 1)) + mn;
+    }
+
+    // Returns {a, b} where a ÷ b = integer quotient, all in [mn,mx]
+    function divPair(mn, mx) {
+        var b = randInt(mn, mx);
+        if (b === 0) b = 1;
+        var q = randInt(mn, mx);
+        if (q === 0) q = 1;
+        return { a: b * q, b: b, q: q };
+    }
+
+    function getInt(id) { return parseInt(document.getElementById(id).value, 10) || 2; }
+
+    function getEnabledOps() {
+        var ops = [];
+        if (document.getElementById('op-add').checked) ops.push('add');
+        if (document.getElementById('op-sub').checked) ops.push('sub');
+        if (document.getElementById('op-mul').checked) ops.push('mul');
+        if (document.getElementById('op-div').checked) ops.push('div');
+        return ops;
+    }
+
+    function pickOp(ops) { return ops[Math.floor(Math.random() * ops.length)]; }
+
+    var OP_SYM = { add: '+', sub: '\u2212', mul: '\u00D7', div: '\u00F7' };
+
+    function isHigh(op) { return op === 'mul' || op === 'div'; }
+    function isLow(op)  { return op === 'add' || op === 'sub'; }
+
+    // ============================================================
+    // TWO-TERM EVAL (integer-safe)
+    // ============================================================
+    function evalPair(a, op, b) {
+        if (op === 'add') return a + b;
+        if (op === 'sub') return a - b;
+        if (op === 'mul') return a * b;
+        if (op === 'div') return (b !== 0) ? Math.round(a / b) : a;
+        return 0;
+    }
+
+    // ============================================================
+    // BUILD A 3-TERM PROBLEM (2 ops), no brackets
+    // Returns { display, stepDisplay, stepIntermediate, answer }
+    // ============================================================
+    function build3Term(ops, mn, mx) {
+        var op1 = pickOp(ops);
+        var op2 = pickOp(ops);
+        var a, b, c, inner, outer;
+
+        // Determine which pair evaluates first by BODMAS
+        var rightFirst = isHigh(op2) && isLow(op1);
+        var leftFirst  = !rightFirst; // high/high, low/low, or high-left/low-right
+
+        if (leftFirst) {
+            // [a op1 b] op2 c
+            if (op1 === 'div') {
+                var dp = divPair(mn, mx);
+                a = dp.a; b = dp.b; inner = dp.q;
+            } else {
+                a = randInt(mn, mx); b = randInt(mn, mx);
+                inner = evalPair(a, op1, b);
+            }
+            if (op2 === 'div') {
+                // inner ÷ c must be integer
+                c = randInt(mn, mx);
+                if (c === 0) c = 1;
+                // adjust so inner is divisible by c
+                var q2 = Math.round(inner / c);
+                if (q2 === 0) q2 = 1;
+                inner = c * q2;
+                // recompute a or just set a=inner-eval to keep a op1 b = inner
+                // Simplest: redo a/b so their result = inner
+                if (op1 === 'add') { a = randInt(mn, mx); b = inner - a; }
+                else if (op1 === 'sub') { a = inner + b; b = randInt(mn, mx); a = inner + b; }
+                else { a = inner; b = 1; } // mul fallback
+                outer = Math.round(inner / c);
+            } else {
+                c = randInt(mn, mx);
+                outer = evalPair(inner, op2, c);
+            }
+            return {
+                display: a + ' ' + OP_SYM[op1] + ' ' + b + ' ' + OP_SYM[op2] + ' ' + c,
+                stepDisplay: '[' + a + ' ' + OP_SYM[op1] + ' ' + b + '] ' + OP_SYM[op2] + ' ' + c,
+                stepIntermediate: inner + ' ' + OP_SYM[op2] + ' ' + c,
+                answer: outer
+            };
+        } else {
+            // a op1 [b op2 c]   (op2 is high, op1 is low)
+            if (op2 === 'div') {
+                var dp2 = divPair(mn, mx);
+                b = dp2.a; c = dp2.b; inner = dp2.q;
+            } else {
+                b = randInt(mn, mx); c = randInt(mn, mx);
+                inner = evalPair(b, op2, c);
+            }
+            a = randInt(mn, mx);
+            outer = evalPair(a, op1, inner);
+            return {
+                display: a + ' ' + OP_SYM[op1] + ' ' + b + ' ' + OP_SYM[op2] + ' ' + c,
+                stepDisplay: a + ' ' + OP_SYM[op1] + ' [' + b + ' ' + OP_SYM[op2] + ' ' + c + ']',
+                stepIntermediate: a + ' ' + OP_SYM[op1] + ' ' + inner,
+                answer: outer
+            };
+        }
+    }
+
+    // ============================================================
+    // BUILD WITH BRACKETS
+    // ============================================================
+    function build3TermBrackets(ops, mn, mx) {
+        var op1 = pickOp(ops);
+        var op2 = pickOp(ops);
+        var leftBracket = Math.random() < 0.5;
+        var a, b, c, inner, outer;
+
+        if (leftBracket) {
+            // (a op1 b) op2 c
+            if (op1 === 'div') {
+                var dp = divPair(mn, mx);
+                a = dp.a; b = dp.b; inner = dp.q;
+            } else {
+                a = randInt(mn, mx); b = randInt(mn, mx);
+                inner = evalPair(a, op1, b);
+            }
+            if (op2 === 'div') {
+                c = randInt(mn, mx); if (c === 0) c = 1;
+                var q2 = (inner !== 0) ? Math.round(inner / c) : 1;
+                if (q2 === 0) q2 = 1;
+                c = (inner !== 0) ? Math.ceil(Math.abs(inner) / Math.max(1, Math.abs(c))) : 1;
+                if (inner % c !== 0) { c = 1; }
+                outer = Math.round(inner / c);
+            } else {
+                c = randInt(mn, mx);
+                outer = evalPair(inner, op2, c);
+            }
+            return {
+                display: '(' + a + ' ' + OP_SYM[op1] + ' ' + b + ') ' + OP_SYM[op2] + ' ' + c,
+                stepDisplay: '[(' + a + ' ' + OP_SYM[op1] + ' ' + b + ')] ' + OP_SYM[op2] + ' ' + c,
+                stepIntermediate: inner + ' ' + OP_SYM[op2] + ' ' + c,
+                answer: outer
+            };
+        } else {
+            // a op1 (b op2 c)
+            if (op2 === 'div') {
+                var dp2 = divPair(mn, mx);
+                b = dp2.a; c = dp2.b; inner = dp2.q;
+            } else {
+                b = randInt(mn, mx); c = randInt(mn, mx);
+                inner = evalPair(b, op2, c);
+            }
+            a = randInt(mn, mx);
+            outer = evalPair(a, op1, inner);
+            return {
+                display: a + ' ' + OP_SYM[op1] + ' (' + b + ' ' + OP_SYM[op2] + ' ' + c + ')',
+                stepDisplay: a + ' ' + OP_SYM[op1] + ' [(' + b + ' ' + OP_SYM[op2] + ' ' + c + ')]',
+                stepIntermediate: a + ' ' + OP_SYM[op1] + ' ' + inner,
+                answer: outer
+            };
+        }
+    }
+
+    // ============================================================
+    // BUILD 4-TERM (3 ops) — extend a 3-term problem
+    // ============================================================
+    function build4Term(ops, mn, mx) {
+        var base = document.getElementById('use-brackets').checked
+            ? build3TermBrackets(ops, mn, mx)
+            : build3Term(ops, mn, mx);
+        var op3 = pickOp(ops);
+        var c3  = randInt(mn, mx);
+        // Append  base op3 c3
+        // BODMAS: if op3 is high (×÷), it binds tightly to base.answer
+        // For display purposes we just show the whole 4-term expression
+        // and in step show: [base expression = base.answer] op3 c3  --> final
+        var finalAns;
+        if (op3 === 'div') {
+            if (c3 === 0) c3 = 1;
+            // ensure base.answer divisible by c3
+            if (base.answer % c3 !== 0) c3 = 1;
+            finalAns = base.answer / c3;
+        } else {
+            finalAns = evalPair(base.answer, op3, c3);
+        }
+        return {
+            display: base.display + ' ' + OP_SYM[op3] + ' ' + c3,
+            stepDisplay: '[' + base.display + '] ' + OP_SYM[op3] + ' ' + c3,
+            stepIntermediate: base.answer + ' ' + OP_SYM[op3] + ' ' + c3,
+            answer: finalAns
+        };
+    }
+
+    // ============================================================
+    // CURRENT PROBLEM STATE
+    // ============================================================
+    var currentProblem = null;
+    var state = 0; // 0=expression, 1=step shown, 2=answer shown
+
+    var problemEl  = document.getElementById('problem');
+    var stepEl     = document.getElementById('step-display');
+    var answerEl   = document.getElementById('final-answer');
+
+    function generateProblem() {
+        var ops = getEnabledOps();
+        if (ops.length === 0) { alert('Please select at least one operation.'); return; }
+
+        var mn = getInt('min-num');
+        var mx = getInt('max-num');
+        if (mn > mx) { var t = mn; mn = mx; mx = t; }
+        if (mn < 1) mn = 1; // keep positive for clean display
+
+        var use3op      = document.getElementById('enable3op').checked;
+        var useBrackets = document.getElementById('use-brackets').checked;
+
+        var prob;
+        if (use3op) {
+            prob = build4Term(ops, mn, mx);
+            problemEl.style.fontSize = '2.6rem';
+        } else {
+            prob = useBrackets
+                ? build3TermBrackets(ops, mn, mx)
+                : build3Term(ops, mn, mx);
+            problemEl.style.fontSize = '3.8rem';
+        }
+
+        currentProblem = prob;
+        state = 0;
+
+        problemEl.innerText     = prob.display;
+        stepEl.innerHTML        = '&nbsp;';
+        stepEl.style.visibility = 'hidden';
+        answerEl.innerText      = '&nbsp;';
+        answerEl.style.visibility = 'hidden';
+    }
+
+    function showStep() {
+        if (!currentProblem) return;
+        // Replace [...] with highlighted span
+        var html = currentProblem.stepDisplay.replace(/\[([^\]]+)\]/g, function(_, inner) {
+            return '<span class="highlight">' + inner + '</span>';
+        });
+        html += ' \u2192 ' + currentProblem.stepIntermediate;
+        stepEl.innerHTML = html;
+        stepEl.style.visibility = 'visible';
+    }
+
+    function showAnswer() {
+        if (!currentProblem) return;
+        answerEl.innerText        = '= ' + currentProblem.answer;
+        answerEl.style.visibility = 'visible';
+    }
+
+    // 3-state stepper
+    function handleStep() {
+        if (state === 0)      { showStep();    state = 1; }
+        else if (state === 1) { showAnswer();  state = 2; }
+        else                  { generateProblem(); }
+        // state reset happens inside generateProblem
+    }
+
+    function toggle3op() {
+        document.getElementById('group3op').style.display =
+            document.getElementById('enable3op').checked ? 'block' : 'none';
+    }
+
+    function newGame() { generateProblem(); }
+
+    // ============================================================
+    // POWER-UP: Question counter + history + Next button
+    // ============================================================
+    (function() {
+        var sidebar = document.getElementById('sidebar');
+        var card    = document.getElementById('card');
+
+        var historyLink = document.createElement('a');
+        historyLink.id    = 'history-link-main';
+        historyLink.style = 'margin-top: auto; font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; cursor: pointer; display: block; padding-top: 20px;';
+        historyLink.innerText = '\uD83D\uDCDC View Session History (0)';
+        sidebar.appendChild(historyLink);
+
+        var nextBtn = document.createElement('button');
+        nextBtn.style     = 'position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;';
+        nextBtn.innerText = 'Next Step \u2794';
+        document.body.appendChild(nextBtn);
+
+        var qCount = 1;
+        var sessionHistory = [];
+
+        function doStep() {
+            var prevState = state;
+            if (prevState === 2) {
+                // About to move to next question — record history
+                sessionHistory.push({
+                    no: qCount,
+                    prob: currentProblem ? currentProblem.display : '--',
+                    ans: currentProblem ? currentProblem.answer : '--'
+                });
+                historyLink.innerText = '\uD83D\uDCDC View Session History (' + sessionHistory.length + ')';
+                handleStep();
+                qCount++;
+                document.getElementById('q-counter-display').innerText = 'Question: #' + qCount;
+            } else {
+                handleStep();
+            }
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown') { e.preventDefault(); doStep(); }
+        }, true);
+
+        nextBtn.addEventListener('click', function(e) { e.preventDefault(); doStep(); });
+
+        historyLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (sessionHistory.length === 0) { alert('No questions completed yet!'); return; }
+            var report = '--- Session History (Total: ' + sessionHistory.length + ') ---\n\n';
+            sessionHistory.forEach(function(item) {
+                report += 'Q' + item.no + ': ' + item.prob + ' = ' + item.ans + '\n';
+            });
+            alert(report);
+        });
+    })();
+
+    // ============================================================
+    // POWER-UP: Mobile sidebar toggle
+    // ============================================================
+    (function() {
+        var toggleBtn = document.getElementById('menu-toggle');
+        var sidebar   = document.getElementById('sidebar');
+
+        toggleBtn.onclick = function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+            toggleBtn.innerHTML = sidebar.classList.contains('open') ? '\u2715 Close' : '\u2630 Settings';
+        };
+
+        document.getElementById('main-area').onclick = function() {
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                toggleBtn.innerHTML = '\u2630 Settings';
+            }
+        };
+    })();
+
+    // ============================================================
+    // POWER-UP: Nav icons + fullscreen
+    // ============================================================
+    (function() {
+        var nav = document.createElement('div');
+        nav.id = 'nav-icons';
+
+        function makeLink(href, html, title, bg) {
+            var a = document.createElement('a');
+            a.href = href; a.innerHTML = html; a.title = title;
+            if (bg) a.style.background = bg;
+            return a;
+        }
+
+        nav.appendChild(makeLink('index.html', '\uD83C\uDFE0<span class="nav-text"> Home</span>', 'Home'));
+        nav.appendChild(makeLink('about.html', '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
+        nav.appendChild(makeLink('donate.html',
+            '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
+            'Support with a coffee', 'rgba(255,165,0,0.9)'));
+        nav.appendChild(makeLink('donate_usd.html',
+            '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
+            'International support', 'rgba(34,197,94,0.9)'));
+
+        var fsBtn = document.createElement('button');
+        fsBtn.className = 'nav-btn';
+        fsBtn.title     = 'Toggle Full Screen';
+        fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+        fsBtn.onclick   = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u2715 Exit Full Screen</span><span class="mobile-text">\u2715</span>';
+            } else {
+                document.exitFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+            }
+        };
+        nav.appendChild(fsBtn);
+        document.body.appendChild(nav);
+    })();
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    generateProblem();
+    </script>
+</body>
+</html>

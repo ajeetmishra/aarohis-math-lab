@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BODMAS Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #d97706;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --correct-color: #38b000;
+            --wrong-color: #e63946;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- SIDEBAR ---- */
+        #sidebar {
+            width: 280px;
+            min-width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(217,119,6,0.25);
+        }
+
+        button:hover { background-color: #b45309; }
+        button:active { transform: translateY(2px); }
+
+        /* ---- MAIN AREA ---- */
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+            gap: 24px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* ---- CARD ---- */
+        #card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 620px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid white;
+            padding: 30px 20px 24px;
+            transition: border-color 0.25s ease;
+        }
+
+        #card.correct { border-color: var(--correct-color); }
+        #card.wrong   { border-color: var(--wrong-color); }
+
+        #q-counter {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        #problem {
+            font-size: 3.5rem;
+            margin: 0 0 16px;
+            font-weight: 900;
+            color: #3f37c9;
+            line-height: 1.2;
+        }
+
+        #answer-input {
+            font-size: 2.5rem;
+            width: 180px;
+            text-align: center;
+            border: 3px solid #ced4da;
+            border-radius: 14px;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f8f9fa;
+        }
+
+        #answer-input:focus {
+            border-color: var(--accent-color);
+            background: white;
+        }
+
+        #answer-input:disabled {
+            background: #f1f3f5;
+            color: var(--text-muted);
+        }
+
+        #submit-btn {
+            margin-top: 14px;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+        }
+
+        #feedback {
+            min-height: 1.8rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #feedback.correct { color: var(--correct-color); }
+        #feedback.wrong   { color: var(--wrong-color); }
+
+        /* ---- STATS BAR ---- */
+        #stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            border-radius: 20px;
+            padding: 12px 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            min-width: 55px;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        #level-badge .stat-value { color: var(--accent-color); font-size: 1.5rem; }
+
+        .stat-divider { width: 1px; height: 28px; background: #e9ecef; }
+
+        #reset-stats-btn {
+            font-size: 0.75rem;
+            padding: 7px 14px;
+            background: #e63946;
+            border-radius: 8px;
+            box-shadow: none;
+        }
+
+        #reset-stats-btn:hover { background: #c1121f; }
+
+        /* ---- NAV ICONS ---- */
+        #nav-icons {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 4000;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        #nav-icons a, #nav-icons .nav-btn {
+            display: block;
+            padding: 9px 14px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: normal;
+            box-shadow: none;
+        }
+
+        #nav-icons a:hover, #nav-icons .nav-btn:hover { background: rgba(0,0,0,0.7); }
+
+        /* ---- MOBILE SIDEBAR TOGGLE ---- */
+        #menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 3000;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(217,119,6,0.35);
+        }
+
+        .desktop-text { display: inline; }
+        .mobile-text  { display: none; }
+
+        /* ---- MOBILE OVERRIDES ---- */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0; bottom: 0;
+                width: 80%;
+                min-width: unset;
+                transition: left 0.3s ease;
+                z-index: 2000;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            }
+
+            #sidebar.open { left: 0; }
+            #menu-toggle  { display: block; }
+
+            #main-area { width: 100vw; padding: 10px; }
+            #card { width: 95%; padding: 20px 14px 18px; }
+
+            #problem      { font-size: 2.4rem !important; margin-bottom: 10px; }
+            #answer-input { font-size: 2rem; width: 150px; }
+            #submit-btn   { padding: 10px 28px; font-size: 1rem; }
+            #feedback     { font-size: 1rem; }
+
+            #stats-bar  { gap: 10px; padding: 10px 14px; }
+            .stat-value { font-size: 1.1rem; }
+            #level-badge .stat-value { font-size: 1.2rem; }
+
+            .desktop-text { display: none !important; }
+            .mobile-text  { display: inline !important; }
+
+            #nav-icons { top: 15px; right: 10px; gap: 5px; }
+            #nav-icons a, #nav-icons .nav-btn { padding: 8px 10px; font-size: 0.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            .stat-label { font-size: 0.55rem; }
+            .stat-value { font-size: 0.95rem; }
+            #level-badge .stat-value { font-size: 1rem; }
+            .stat-divider { display: none; }
+            .nav-text { display: none !important; }
+        }
+
+        /* ---- STREAK TOAST ---- */
+        #streak-toast {
+            position: fixed;
+            top: 42%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, var(--accent-color), #f59e0b);
+            color: white;
+            font-size: clamp(1.4rem, 5vw, 2.2rem);
+            font-weight: 900;
+            padding: 18px 36px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            z-index: 9999;
+            text-align: center;
+            pointer-events: none;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+        }
+        #streak-toast.show { transform: translate(-50%, -50%) scale(1); }
+
+        /* ---- STREAK PROGRESS BAR ---- */
+        #streak-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            border-radius: 16px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        }
+        #streak-progress.hidden { display: none; }
+        .streak-progress-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .streak-segments { display: flex; gap: 6px; }
+        .streak-seg {
+            width: 36px; height: 14px;
+            border-radius: 7px;
+            background: #e9ecef;
+            transition: background 0.4s, box-shadow 0.4s;
+        }
+        .streak-seg.filled {
+            background: linear-gradient(135deg, var(--accent-color), #f59e0b);
+            animation: throb 1.3s ease-in-out infinite;
+        }
+        @keyframes throb {
+            0%   { transform: scale(1);    box-shadow: 0 0 0 rgba(217,119,6,0); }
+            50%  { transform: scale(1.12); box-shadow: 0 0 10px rgba(217,119,6,0.45); }
+            100% { transform: scale(1);    box-shadow: 0 0 0 rgba(217,119,6,0); }
+        }
+        .streak-count-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            min-width: 28px;
+            text-align: center;
+        }
+
+        /* ---- TETRIS REWARD MODAL ---- */
+        #tetris-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 11000;
+            align-items: center;
+            justify-content: center;
+        }
+        #tetris-modal-backdrop.show { display: flex; }
+        #tetris-modal-card {
+            background: white;
+            border-radius: 24px;
+            padding: 36px 32px 28px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalPop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.7); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+        #tetris-modal-card h3 { font-size: 1.5rem; margin: 0 0 8px; color: var(--accent-color); }
+        #tetris-modal-card p  { font-size: 1rem; color: var(--text-main); margin: 0 0 24px; line-height: 1.5; }
+        .modal-btns { display: flex; gap: 12px; justify-content: center; }
+        .modal-btns button { padding: 12px 32px; border-radius: 14px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; }
+        .modal-btn-yes { background: linear-gradient(135deg, var(--accent-color), #f59e0b); color: white; box-shadow: 0 4px 12px rgba(217,119,6,0.3); }
+        .modal-btn-yes:hover { filter: brightness(1.1); }
+        .modal-btn-no  { background: #e9ecef; color: var(--text-main); box-shadow: none; }
+        .modal-btn-no:hover { background: #dee2e6; }
+
+        /* ---- TETRIS IFRAME OVERLAY ---- */
+        #tetris-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #111;
+            z-index: 12000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+        #tetris-overlay.show { display: flex; }
+        #tetris-timer-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 10px 20px;
+            background: #1a1a2e;
+            flex-shrink: 0;
+        }
+        #tetris-timer-bar span { color: #f59e0b; font-size: 1.1rem; font-weight: 800; font-family: 'Segoe UI', monospace; }
+        #tetris-timer-progress { flex: 1; max-width: 320px; height: 8px; background: #333; border-radius: 4px; overflow: hidden; }
+        #tetris-timer-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); border-radius: 4px; transition: width 1s linear; }
+        #tetris-close-btn { padding: 8px 18px; background: var(--wrong-color); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; box-shadow: none; }
+        #tetris-close-btn:hover { background: #c1121f; }
+        #tetris-iframe-wrap { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; }
+        #tetris-iframe { border: none; width: 520px; height: 700px; max-width: 100vw; max-height: calc(100vh - 50px); background: #000; }
+
+        @media (max-width: 768px) {
+            .streak-seg { width: 28px; height: 12px; }
+            #streak-progress { padding: 8px 12px; gap: 6px; }
+            #tetris-iframe { width: 100vw; height: calc(100vh - 50px); }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+<div id="streak-toast"></div>
+
+    <button id="menu-toggle">&#9776; Settings</button>
+
+    <div id="sidebar">
+        <h2>&#129518; BODMAS Order</h2>
+
+        <div class="input-group">
+            <label>Operations to Include</label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-add" checked>
+                <label for="op-add">Addition (+)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-sub" checked>
+                <label for="op-sub">Subtraction (&#8722;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-mul" checked>
+                <label for="op-mul">Multiplication (&#215;)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="op-div" checked>
+                <label for="op-div">Division (&#247;)</label>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Number Range (Min &#8211; Max)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" id="min-num" value="2" style="width:50%">
+                <input type="number" id="max-num" value="9" style="width:50%">
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="enable3op" onchange="toggle3op()">
+            <label for="enable3op">Add 3rd operation<br><small>(4-term expressions)</small></label>
+        </div>
+
+        <div id="group3op" style="display:none;">
+            <div class="input-group">
+                <label style="color:#d97706;">&#128712; Uses same number range above</label>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="use-brackets">
+            <label for="use-brackets">Include Brackets</label>
+        </div>
+
+        <button onclick="newGame()">Start New Game</button>
+
+        <a id="history-link" href="#"
+           style="margin-top:auto; font-size:0.85rem; color:var(--accent-color);
+                  text-decoration:underline; cursor:pointer; display:block; padding-top:20px;">
+            &#128220; View Session History (0)
+        </a>
+    </div>
+
+    <div id="main-area">
+        <div id="card">
+            <div id="q-counter">Question #1</div>
+            <p id="problem">--</p>
+            <input
+                type="number"
+                id="answer-input"
+                placeholder="?"
+                autocomplete="off"
+            >
+            <button id="submit-btn" onclick="submitAnswer()">Submit &#10003;</button>
+            <div id="feedback"></div>
+        </div>
+
+        <!-- Streak Progress Bar -->
+        <div id="streak-progress">
+            <span class="streak-progress-label">Streaks</span>
+            <div class="streak-segments">
+                <div class="streak-seg" id="seg-1"></div>
+                <div class="streak-seg" id="seg-2"></div>
+                <div class="streak-seg" id="seg-3"></div>
+                <div class="streak-seg" id="seg-4"></div>
+                <div class="streak-seg" id="seg-5"></div>
+            </div>
+            <span class="streak-count-label" id="streak-count-label">0/5</span>
+        </div>
+
+        <div id="stats-bar">
+            <div class="stat-item" id="level-badge">
+                <span class="stat-label">Level</span>
+                <span class="stat-value" id="stat-level">1</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Questions</span>
+                <span class="stat-value" id="stat-questions">0</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Correct</span>
+                <span class="stat-value" id="stat-correct">0</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Score</span>
+                <span class="stat-value" id="stat-score">--%</span>
+            </div>
+            <div class="stat-divider"></div>
+            <button id="reset-stats-btn" onclick="resetStats()">Reset Stats</button>
+        </div>
+    </div>
+
+    <!-- Tetris Reward Modal -->
+    <div id="tetris-modal-backdrop">
+        <div id="tetris-modal-card">
+            <h3>&#127881; Amazing!</h3>
+            <p>You've completed <strong>5 streak milestones</strong>! You've earned a <strong>3-minute Tetris break</strong>.<br>Would you like to play?</p>
+            <div class="modal-btns">
+                <button class="modal-btn-yes" onclick="acceptTetris()">Yes, let's play! &#127918;</button>
+                <button class="modal-btn-no" onclick="declineTetris()">No thanks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tetris Iframe Overlay -->
+    <div id="tetris-overlay">
+        <div id="tetris-timer-bar">
+            <span id="tetris-timer-text">3:00</span>
+            <div id="tetris-timer-progress">
+                <div id="tetris-timer-fill"></div>
+            </div>
+            <button id="tetris-close-btn" onclick="closeTetris()">&#10005; Close</button>
+        </div>
+        <div id="tetris-iframe-wrap"></div>
+    </div>
+
+    <script>
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function randInt(mn, mx) {
+        return Math.floor(Math.random() * (mx - mn + 1)) + mn;
+    }
+
+    function divPair(mn, mx) {
+        var b = randInt(mn, mx); if (b === 0) b = 1;
+        var q = randInt(mn, mx); if (q === 0) q = 1;
+        return { a: b * q, b: b, q: q };
+    }
+
+    function getInt(id) { return parseInt(document.getElementById(id).value, 10) || 2; }
+
+    function getEnabledOps() {
+        var ops = [];
+        if (document.getElementById('op-add').checked) ops.push('add');
+        if (document.getElementById('op-sub').checked) ops.push('sub');
+        if (document.getElementById('op-mul').checked) ops.push('mul');
+        if (document.getElementById('op-div').checked) ops.push('div');
+        return ops;
+    }
+
+    function pickOp(ops) { return ops[Math.floor(Math.random() * ops.length)]; }
+
+    var OP_SYM = { add: '+', sub: '\u2212', mul: '\u00D7', div: '\u00F7' };
+
+    function isHigh(op) { return op === 'mul' || op === 'div'; }
+    function isLow(op)  { return op === 'add' || op === 'sub'; }
+
+    function evalPair(a, op, b) {
+        if (op === 'add') return a + b;
+        if (op === 'sub') return a - b;
+        if (op === 'mul') return a * b;
+        if (op === 'div') return (b !== 0) ? Math.round(a / b) : a;
+        return 0;
+    }
+
+    // ============================================================
+    // EXPRESSION BUILDERS
+    // ============================================================
+    function build3Term(ops, mn, mx) {
+        var op1 = pickOp(ops);
+        var op2 = pickOp(ops);
+        var a, b, c, inner, outer;
+        var rightFirst = isHigh(op2) && isLow(op1);
+
+        if (!rightFirst) {
+            // left pair first: [a op1 b] op2 c
+            if (op1 === 'div') {
+                var dp = divPair(mn, mx); a = dp.a; b = dp.b; inner = dp.q;
+            } else {
+                a = randInt(mn, mx); b = randInt(mn, mx); inner = evalPair(a, op1, b);
+            }
+            if (op2 === 'div') {
+                c = randInt(mn, mx); if (c === 0) c = 1;
+                if (inner % c !== 0) { c = 1; }
+                outer = Math.round(inner / c);
+            } else {
+                c = randInt(mn, mx); outer = evalPair(inner, op2, c);
+            }
+        } else {
+            // right pair first: a op1 [b op2 c]
+            if (op2 === 'div') {
+                var dp2 = divPair(mn, mx); b = dp2.a; c = dp2.b; inner = dp2.q;
+            } else {
+                b = randInt(mn, mx); c = randInt(mn, mx); inner = evalPair(b, op2, c);
+            }
+            a = randInt(mn, mx); outer = evalPair(a, op1, inner);
+        }
+        return { display: a + ' ' + OP_SYM[op1] + ' ' + b + ' ' + OP_SYM[op2] + ' ' + c, answer: outer };
+    }
+
+    function build3TermBrackets(ops, mn, mx) {
+        var op1 = pickOp(ops);
+        var op2 = pickOp(ops);
+        var leftBracket = Math.random() < 0.5;
+        var a, b, c, inner, outer;
+
+        if (leftBracket) {
+            if (op1 === 'div') {
+                var dp = divPair(mn, mx); a = dp.a; b = dp.b; inner = dp.q;
+            } else {
+                a = randInt(mn, mx); b = randInt(mn, mx); inner = evalPair(a, op1, b);
+            }
+            if (op2 === 'div') {
+                c = randInt(mn, mx); if (c === 0) c = 1;
+                if (inner !== 0 && inner % c !== 0) c = 1;
+                outer = (c !== 0) ? Math.round(inner / c) : inner;
+            } else {
+                c = randInt(mn, mx); outer = evalPair(inner, op2, c);
+            }
+            return { display: '(' + a + ' ' + OP_SYM[op1] + ' ' + b + ') ' + OP_SYM[op2] + ' ' + c, answer: outer };
+        } else {
+            if (op2 === 'div') {
+                var dp2 = divPair(mn, mx); b = dp2.a; c = dp2.b; inner = dp2.q;
+            } else {
+                b = randInt(mn, mx); c = randInt(mn, mx); inner = evalPair(b, op2, c);
+            }
+            a = randInt(mn, mx); outer = evalPair(a, op1, inner);
+            return { display: a + ' ' + OP_SYM[op1] + ' (' + b + ' ' + OP_SYM[op2] + ' ' + c + ')', answer: outer };
+        }
+    }
+
+    function build4Term(ops, mn, mx) {
+        var base = document.getElementById('use-brackets').checked
+            ? build3TermBrackets(ops, mn, mx)
+            : build3Term(ops, mn, mx);
+        var op3 = pickOp(ops);
+        var c3  = randInt(mn, mx);
+        var finalAns;
+        if (op3 === 'div') {
+            if (c3 === 0) c3 = 1;
+            if (base.answer % c3 !== 0) c3 = 1;
+            finalAns = Math.round(base.answer / c3);
+        } else {
+            finalAns = evalPair(base.answer, op3, c3);
+        }
+        return { display: base.display + ' ' + OP_SYM[op3] + ' ' + c3, answer: finalAns };
+    }
+
+    // ============================================================
+    // PERSISTENCE
+    // ============================================================
+    var STORAGE_KEY = 'bodmas_stats_v1';
+    var ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
+
+    function loadStats() {
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                var saved = JSON.parse(raw);
+                ps.totalQuestions = saved.totalQuestions || 0;
+                ps.correctAnswers = saved.correctAnswers || 0;
+                ps.level          = saved.level          || 1;
+                sessionHistory      = saved.sessionHistory  || [];
+                sessionHistoryCount = sessionHistory.length;
+                qCount              = sessionHistoryCount + 1;
+            }
+        } catch(e) {}
+        renderStats();
+        updateHistoryLink();
+    }
+
+    function saveStats() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(
+                Object.assign({}, ps, { sessionHistory: sessionHistory })
+            ));
+        } catch(e) {}
+    }
+
+    function recalcLevel() { ps.level = 1 + Math.floor(ps.correctAnswers / 10); }
+
+    function renderStats() {
+        document.getElementById('stat-level').innerText     = ps.level;
+        document.getElementById('stat-questions').innerText = ps.totalQuestions;
+        document.getElementById('stat-correct').innerText   = ps.correctAnswers;
+        document.getElementById('stat-score').innerText     = ps.totalQuestions > 0
+            ? Math.round((ps.correctAnswers / ps.totalQuestions) * 100) + '%'
+            : '--%';
+    }
+
+    function resetStats() {
+        if (!confirm('Reset all saved progress? This cannot be undone.')) return;
+        ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
+        saveStats();
+        sessionHistory = []; sessionHistoryCount = 0;
+        renderStats(); updateHistoryLink();
+    }
+
+    // ============================================================
+    // GAME STATE
+    // ============================================================
+    var currentAnswer       = null;
+    var awaitingNext        = false;
+    var currentStreak       = 0;
+    var qCount              = 1;
+    var sessionHistory      = [];
+    var sessionHistoryCount = 0;
+    var streakMilestones    = 0;
+    var tetrisUsed          = false;
+    var tetrisTimerId       = null;
+    var tetrisSecondsLeft   = 0;
+    var TETRIS_DURATION     = 180; // 3 minutes
+
+    var problemEl   = document.getElementById('problem');
+    var answerInput = document.getElementById('answer-input');
+    var feedbackEl  = document.getElementById('feedback');
+    var cardEl      = document.getElementById('card');
+    var submitBtn   = document.getElementById('submit-btn');
+
+    // ============================================================
+    // GENERATE PROBLEM
+    // ============================================================
+    function generateProblem() {
+        var ops = getEnabledOps();
+        if (ops.length === 0) { alert('Please select at least one operation.'); return; }
+
+        var mn = getInt('min-num');
+        var mx = getInt('max-num');
+        if (mn > mx) { var t = mn; mn = mx; mx = t; }
+        if (mn < 1) mn = 1;
+
+        var use3op = document.getElementById('enable3op').checked;
+        var useBrackets = document.getElementById('use-brackets').checked;
+
+        var prob;
+        if (use3op) {
+            prob = build4Term(ops, mn, mx);
+            problemEl.style.fontSize = '2.6rem';
+        } else {
+            prob = useBrackets ? build3TermBrackets(ops, mn, mx) : build3Term(ops, mn, mx);
+            problemEl.style.fontSize = '3.5rem';
+        }
+
+        currentAnswer             = prob.answer;
+        problemEl.innerText       = prob.display;
+        answerInput.value         = '';
+        answerInput.disabled      = false;
+        feedbackEl.innerText      = '';
+        feedbackEl.className      = '';
+        cardEl.className          = '';
+        awaitingNext              = false;
+        submitBtn.innerText       = 'Submit \u2713';
+        document.getElementById('q-counter').innerText = 'Question #' + qCount;
+        answerInput.focus();
+    }
+
+    function toggle3op() {
+        document.getElementById('group3op').style.display =
+            document.getElementById('enable3op').checked ? 'block' : 'none';
+    }
+
+    // ============================================================
+    // SUBMIT
+    // ============================================================
+    function submitAnswer() {
+        if (awaitingNext) { qCount++; generateProblem(); return; }
+
+        var raw = answerInput.value.trim();
+        if (raw === '' || raw === '-') { answerInput.focus(); return; }
+        var userAnswer = parseInt(raw, 10);
+        if (isNaN(userAnswer)) { answerInput.focus(); return; }
+
+        var isCorrect = userAnswer === currentAnswer;
+
+        sessionHistory.push({
+            no: qCount,
+            prob: problemEl.innerText,
+            ans: currentAnswer,
+            userAns: userAnswer,
+            correct: isCorrect
+        });
+        sessionHistoryCount++;
+        updateHistoryLink();
+
+        ps.totalQuestions++;
+        if (isCorrect) {
+            ps.correctAnswers++;
+            feedbackEl.innerText = '\u2713 Correct!';
+            feedbackEl.className = 'correct';
+            cardEl.className     = 'correct';
+        } else {
+            feedbackEl.innerText = '\u2717 Wrong \u2014 answer is ' + currentAnswer;
+            feedbackEl.className = 'wrong';
+            cardEl.className     = 'wrong';
+        }
+
+        if (isCorrect) {
+            currentStreak++;
+            if (currentStreak % 5 === 0) {
+                fireStreakConfetti(currentStreak);
+                if (!tetrisUsed) {
+                    streakMilestones++;
+                    updateStreakBar();
+                    if (streakMilestones >= 5) {
+                        setTimeout(showTetrisModal, 1200);
+                    }
+                }
+            }
+        } else {
+            currentStreak = 0;
+        }
+
+        recalcLevel();
+        saveStats();
+        renderStats();
+
+        awaitingNext         = true;
+        answerInput.disabled = true;
+        submitBtn.innerText  = 'Next \u2794';
+        submitBtn.focus();
+    }
+
+    function newGame() {
+        qCount = 1; currentStreak = 0;
+        generateProblem();
+    }
+
+    // ============================================================
+    // STREAK CONFETTI + PROGRESS BAR
+    // ============================================================
+    function fireStreakConfetti(n) {
+        var toast = document.getElementById('streak-toast');
+        toast.textContent = '\uD83C\uDF89 ' + n + ' in a row!';
+        toast.classList.add('show');
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 160, spread: 80, origin: { y: 0.55 } });
+        }
+        setTimeout(function() { toast.classList.remove('show'); }, 2400);
+    }
+
+    function updateStreakBar() {
+        var bar = document.getElementById('streak-progress');
+        if (tetrisUsed) { bar.classList.add('hidden'); return; }
+        bar.classList.remove('hidden');
+        for (var i = 1; i <= 5; i++) {
+            var seg = document.getElementById('seg-' + i);
+            if (i <= streakMilestones) seg.classList.add('filled');
+            else seg.classList.remove('filled');
+        }
+        document.getElementById('streak-count-label').textContent = streakMilestones + '/5';
+    }
+
+    // ============================================================
+    // TETRIS REWARD
+    // ============================================================
+    function showTetrisModal() {
+        document.getElementById('tetris-modal-backdrop').classList.add('show');
+    }
+
+    function acceptTetris() {
+        document.getElementById('tetris-modal-backdrop').classList.remove('show');
+        launchTetris();
+    }
+
+    function declineTetris() {
+        document.getElementById('tetris-modal-backdrop').classList.remove('show');
+        tetrisUsed = true; streakMilestones = 0; currentStreak = 0;
+        updateStreakBar();
+    }
+
+    function launchTetris() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(function() {});
+        }
+        var wrap   = document.getElementById('tetris-iframe-wrap');
+        var iframe = document.createElement('iframe');
+        iframe.id  = 'tetris-iframe';
+        iframe.src = 'tetris2/index.html';
+        iframe.setAttribute('allowfullscreen', '');
+        wrap.innerHTML = '';
+        wrap.appendChild(iframe);
+        document.getElementById('tetris-overlay').classList.add('show');
+
+        tetrisSecondsLeft = TETRIS_DURATION;
+        updateTetrisTimer();
+        tetrisTimerId = setInterval(function() {
+            tetrisSecondsLeft--;
+            updateTetrisTimer();
+            if (tetrisSecondsLeft <= 0) closeTetris();
+        }, 1000);
+    }
+
+    function updateTetrisTimer() {
+        var m = Math.floor(tetrisSecondsLeft / 60);
+        var s = tetrisSecondsLeft % 60;
+        document.getElementById('tetris-timer-text').textContent =
+            m + ':' + (s < 10 ? '0' : '') + s;
+        var pct = (tetrisSecondsLeft / TETRIS_DURATION) * 100;
+        document.getElementById('tetris-timer-fill').style.width = pct + '%';
+    }
+
+    function closeTetris() {
+        if (tetrisTimerId) { clearInterval(tetrisTimerId); tetrisTimerId = null; }
+        document.getElementById('tetris-iframe-wrap').innerHTML = '';
+        document.getElementById('tetris-overlay').classList.remove('show');
+        if (document.fullscreenElement) { document.exitFullscreen().catch(function() {}); }
+        tetrisUsed = true; streakMilestones = 0; currentStreak = 0;
+        updateStreakBar();
+    }
+
+    // Key bindings
+    answerInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
+    submitBtn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
+
+    // ============================================================
+    // SESSION HISTORY
+    // ============================================================
+    function updateHistoryLink() {
+        document.getElementById('history-link').innerText =
+            '\uD83D\uDCDC View Session History (' + sessionHistoryCount + ')';
+    }
+
+    document.getElementById('history-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (sessionHistory.length === 0) { alert('No questions answered yet!'); return; }
+        var report = 'Session History \u2014 ' + sessionHistory.length + ' question(s)\n\n';
+        sessionHistory.forEach(function(item) {
+            var mark = item.correct ? '\u2713' : '\u2717';
+            report += mark + '  Q' + item.no + ': ' + item.prob + ' = ' + item.ans;
+            if (!item.correct) report += '  (you entered: ' + item.userAns + ')';
+            report += '\n';
+        });
+        alert(report);
+    });
+
+    // ============================================================
+    // NAV ICONS
+    // ============================================================
+    (function() {
+        var nav = document.createElement('div');
+        nav.id = 'nav-icons';
+
+        function makeLink(href, html, title, bg) {
+            var a = document.createElement('a');
+            a.href = href; a.innerHTML = html; a.title = title;
+            if (bg) a.style.background = bg;
+            return a;
+        }
+
+        nav.appendChild(makeLink('index.html', '\uD83C\uDFE0<span class="nav-text"> Home</span>', 'Home'));
+        nav.appendChild(makeLink('about.html', '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
+        nav.appendChild(makeLink('donate.html',
+            '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
+            'Support with a coffee', 'rgba(255,165,0,0.9)'));
+        nav.appendChild(makeLink('donate_usd.html',
+            '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
+            'International support', 'rgba(34,197,94,0.9)'));
+
+        var fsBtn = document.createElement('button');
+        fsBtn.className = 'nav-btn';
+        fsBtn.title     = 'Toggle Full Screen';
+        fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+        fsBtn.onclick   = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u2715 Exit Full Screen</span><span class="mobile-text">\u2715</span>';
+            } else {
+                document.exitFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+            }
+        };
+        nav.appendChild(fsBtn);
+        document.body.appendChild(nav);
+    })();
+
+    // ============================================================
+    // MOBILE SIDEBAR TOGGLE
+    // ============================================================
+    (function() {
+        var toggleBtn = document.getElementById('menu-toggle');
+        var sidebar   = document.getElementById('sidebar');
+
+        toggleBtn.onclick = function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+            toggleBtn.innerHTML = sidebar.classList.contains('open') ? '\u2715 Close' : '\u2630 Settings';
+        };
+
+        document.getElementById('main-area').onclick = function() {
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                toggleBtn.innerHTML = '\u2630 Settings';
+            }
+        };
+    })();
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    loadStats();
+    updateStreakBar();
+    generateProblem();
+    </script>
+</body>
+</html>
