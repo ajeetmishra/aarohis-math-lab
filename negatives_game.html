@@ -956,6 +956,13 @@
         iframe.src = 'tetris2/index.html';
         iframe.setAttribute('allowfullscreen', '');
         wrap.innerHTML = '';
+        iframe.onload = function() {
+            iframe.focus();
+            var enterEvent = new iframe.contentWindow.KeyboardEvent('keydown', {
+                key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true
+            });
+            iframe.contentDocument.dispatchEvent(enterEvent);
+        };
         wrap.appendChild(iframe);
         document.getElementById('tetris-overlay').classList.add('show');
 
