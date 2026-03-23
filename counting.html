@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counting Objects Flashcards</title>
+    <style>
+        /* Ensure the main area never grows beyond the screen */
+        #main-area {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #card {
+            max-height: 85vh;
+            max-width: 90vw;
+            height: auto;
+            min-height: 300px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #answer {
+            margin-top: 10px;
+            line-height: 1;
+        }
+
+        /* --- RESPONSIVE MOBILE-FIRST OVERRIDES --- */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
+
+            #sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                width: 80%;
+                transition: 0.3s ease;
+                z-index: 2000;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            }
+
+            #sidebar.open {
+                left: 0;
+            }
+
+            #main-area {
+                width: 100vw;
+                height: 100vh;
+                padding: 10px;
+            }
+
+            #card {
+                width: 95%;
+                height: 70vh;
+                margin-top: 50px;
+            }
+
+            #menu-toggle {
+                display: block !important;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 3000;
+                background: var(--accent-color);
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 8px;
+                font-weight: bold;
+            }
+
+            .desktop-text { display: none !important; }
+            .mobile-text { display: inline !important; }
+
+            #nav-icons {
+                right: 15px !important;
+                top: 15px !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 5px !important;
+            }
+
+            #nav-icons a, #nav-icons button {
+                padding: 8px 10px !important;
+                font-size: 0.8rem !important;
+            }
+
+            .emoji-zone { font-size: 2.5rem !important; }
+        }
+
+        #menu-toggle { display: none; }
+
+        @media (max-width: 480px) {
+            .nav-text { display: none !important; }
+            .emoji-zone { font-size: 2rem !important; }
+        }
+
+        .mobile-text { display: none; }
+        .desktop-text { display: inline; }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #65a30d;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --correct-color: #38b000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+
+        select, input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(101, 163, 13, 0.2);
+        }
+
+        button:hover { background-color: #4d7c0f; }
+        button:active { transform: translateY(2px); }
+
+        /* Main Area Styling */
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        #card {
+            background: var(--card-bg);
+            width: 85%;
+            max-width: 700px;
+            height: 450px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid white;
+            overflow: hidden;
+        }
+
+        .emoji-zone {
+            font-size: 3.5rem;
+            line-height: 1.4;
+            max-width: 90%;
+            word-break: break-all;
+            user-select: none;
+        }
+
+        /* Scattered layout: emojis positioned randomly */
+        .emoji-zone.scattered {
+            position: relative;
+            width: 90%;
+            height: 60%;
+            font-size: 2.8rem;
+            word-break: normal;
+        }
+
+        .emoji-zone.scattered .emoji-item {
+            position: absolute;
+            transition: none;
+        }
+
+        #answer {
+            font-size: 5.5rem;
+            color: var(--correct-color);
+            margin-top: 15px;
+            height: 1.2em;
+            font-weight: 800;
+            visibility: hidden;
+        }
+
+        #answer.visible { visibility: visible; }
+
+        .instructions {
+            position: absolute;
+            bottom: 30px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        kbd {
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Counting Settings</h2>
+
+        <div class="input-group">
+            <label>Count Range</label>
+            <select id="countRange" onchange="newGame()">
+                <option value="10" selected>1 to 10</option>
+                <option value="20">1 to 20</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Counting Mode</label>
+            <select id="countMode" onchange="newGame()">
+                <option value="simple" selected>Simple Counting</option>
+                <option value="skip2">Skip Counting by 2s</option>
+                <option value="skip5">Skip Counting by 5s</option>
+                <option value="skip10">Skip Counting by 10s</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Layout</label>
+            <select id="layoutMode" onchange="newGame()">
+                <option value="scattered" selected>Scattered (Fun!)</option>
+                <option value="rows">Neat Rows</option>
+            </select>
+        </div>
+
+        <button onclick="newGame()">New Problem</button>
+
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto; line-height: 1.4;">
+            Use <kbd>↓</kbd> to reveal answer.<br>
+            Use <kbd>↓</kbd> again for next.
+        </p>
+    </div>
+
+    <div id="main-area">
+        <div id="card">
+            <div class="emoji-zone" id="emoji-zone"></div>
+            <p id="answer">--</p>
+        </div>
+        <div class="instructions">Press <b>DOWN ARROW</b> to reveal or skip</div>
+    </div>
+
+    <script>
+        const EMOJIS = ['🍎','🐶','⭐','🌺','🦋','🎈','🐱','🌈','🎸','🐢','🍩','🦄','🏀','🎂','🐧','🌻','🚗','🍉','🐝','🎁'];
+
+        let currentCount = 0;
+        let answerVisible = false;
+
+        const emojiZone = document.getElementById('emoji-zone');
+        const answerEl = document.getElementById('answer');
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function pickEmoji() {
+            return EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+        }
+
+        function generateProblem() {
+            const range = parseInt(document.getElementById('countRange').value);
+            const mode = document.getElementById('countMode').value;
+            const layout = document.getElementById('layoutMode').value;
+
+            let count;
+            if (mode === 'simple') {
+                count = getRandomInt(1, range);
+            } else if (mode === 'skip2') {
+                count = getRandomInt(1, Math.floor(range / 2)) * 2;
+            } else if (mode === 'skip5') {
+                count = getRandomInt(1, Math.floor(range / 5)) * 5;
+            } else {
+                count = getRandomInt(1, Math.floor(range / 10)) * 10;
+            }
+
+            currentCount = count;
+            const emoji = pickEmoji();
+
+            emojiZone.innerHTML = '';
+            emojiZone.className = 'emoji-zone';
+
+            if (layout === 'scattered') {
+                emojiZone.classList.add('scattered');
+                // Place emojis at random positions
+                for (let i = 0; i < count; i++) {
+                    const span = document.createElement('span');
+                    span.className = 'emoji-item';
+                    span.textContent = emoji;
+                    span.style.left = Math.random() * 80 + 5 + '%';
+                    span.style.top = Math.random() * 80 + 5 + '%';
+                    // Random slight rotation for fun
+                    span.style.transform = 'rotate(' + (Math.random() * 30 - 15) + 'deg)';
+                    emojiZone.appendChild(span);
+                }
+            } else {
+                // Neat rows
+                let html = '';
+                for (let i = 0; i < count; i++) {
+                    html += emoji + ' ';
+                }
+                emojiZone.textContent = html.trim();
+            }
+
+            if (mode !== 'simple') {
+                // For skip counting, show the skip instruction
+                const label = mode === 'skip2' ? '2s' : mode === 'skip5' ? '5s' : '10s';
+                answerEl.innerText = count + ' (counting by ' + label + ')';
+            } else {
+                answerEl.innerText = count;
+            }
+
+            answerEl.classList.remove('visible');
+            answerVisible = false;
+        }
+
+        function handleStep() {
+            if (!answerVisible) {
+                answerEl.classList.add('visible');
+                answerVisible = true;
+            } else {
+                generateProblem();
+            }
+        }
+
+        function newGame() {
+            generateProblem();
+        }
+
+        // Init
+        generateProblem();
+
+        /* ISHI MATH SUITE POWER-UP: History, Counter, Next Button */
+        (function() {
+            const sidebar = document.getElementById('sidebar');
+            const card = document.getElementById('card');
+
+            const counterDiv = document.createElement('div');
+            counterDiv.id = 'q-counter-display';
+            counterDiv.style = "font-size: 1.2rem; font-weight: bold; color: #888; margin-bottom: 10px; font-family: sans-serif;";
+            counterDiv.innerText = "Question: #1";
+            card.prepend(counterDiv);
+
+            const historyLink = document.createElement('a');
+            historyLink.id = 'history-link-main';
+            historyLink.style = "margin-top: auto; font-size: 0.85rem; color: var(--accent-color); text-decoration: underline; cursor: pointer; display: block; padding-top: 20px;";
+            historyLink.innerText = "📜 View Session History (0)";
+            sidebar.appendChild(historyLink);
+
+            const nextBtn = document.createElement('button');
+            nextBtn.style = "position: fixed; bottom: 30px; right: 30px; padding: 15px 40px; font-size: 1.2rem; background: var(--accent-color); color: white; border: none; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;";
+            nextBtn.innerText = "Next Step ➔";
+            document.body.appendChild(nextBtn);
+
+            let qCount = 1;
+            let sessionHistory = [];
+            let currentProblemCache = "";
+
+            window.masterStep = function() {
+                const ansEl = document.getElementById('answer');
+                const isAnswerHidden = (window.getComputedStyle(ansEl).visibility === 'hidden' || !ansEl.classList.contains('visible'));
+
+                if (isAnswerHidden) {
+                    currentProblemCache = currentCount + ' objects';
+                    if (typeof handleStep === 'function') handleStep();
+                } else {
+                    sessionHistory.push({
+                        no: qCount,
+                        prob: currentProblemCache,
+                        ans: ansEl.innerText
+                    });
+                    historyLink.innerText = '📜 View Session History (' + sessionHistory.length + ')';
+                    if (typeof handleStep === 'function') handleStep();
+                    qCount++;
+                    counterDiv.innerText = 'Question: #' + qCount;
+                }
+            };
+
+            window.addEventListener('keydown', function(e) {
+                if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    window.masterStep();
+                }
+            }, true);
+
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.masterStep();
+            });
+
+            historyLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (sessionHistory.length === 0) return alert("No questions completed yet!");
+                let report = '--- Session History (Total: ' + sessionHistory.length + ') ---\n\n';
+                sessionHistory.forEach(function(item) {
+                    report += 'Q' + item.no + ': ' + item.prob + ' = ' + item.ans + '\n';
+                });
+                alert(report);
+            });
+        })();
+
+        /* Mobile sidebar toggle */
+        (function() {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.id = 'menu-toggle';
+            toggleBtn.innerHTML = '☰ Settings';
+            document.body.prepend(toggleBtn);
+
+            const sidebar = document.getElementById('sidebar');
+
+            toggleBtn.onclick = function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+                toggleBtn.innerHTML = sidebar.classList.contains('open') ? '✕ Close' : '☰ Settings';
+            };
+
+            document.getElementById('main-area').onclick = function() {
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    toggleBtn.innerHTML = '☰ Settings';
+                }
+            };
+        })();
+
+        /* Full-screen & Nav */
+        (function() {
+            const meta = document.createElement('meta');
+            meta.name = "viewport";
+            meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+            document.getElementsByTagName('head')[0].appendChild(meta);
+
+            const navIcons = document.createElement('div');
+            navIcons.id = 'nav-icons';
+            navIcons.style = "position: fixed; top: 15px; right: 250px; z-index: 4000; display: flex; gap: 10px;";
+
+            const homeLink = document.createElement('a');
+            homeLink.href = 'index.html';
+            homeLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
+            homeLink.innerHTML = '🏠<span class="nav-text"> Home</span>';
+            homeLink.title = 'Home';
+
+            const aboutLink = document.createElement('a');
+            aboutLink.href = 'about.html';
+            aboutLink.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer;";
+            aboutLink.innerHTML = 'ℹ️<span class="nav-text"> About</span>';
+            aboutLink.title = 'About';
+
+            const donateLink = document.createElement('a');
+            donateLink.href = 'donate.html';
+            donateLink.style = "display: block; padding: 10px 15px; background: rgba(255,165,0,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
+            donateLink.innerHTML = '<span class="desktop-text">☕ Donate ₹99</span><span class="mobile-text">☕₹99</span>';
+            donateLink.title = 'Support with a coffee';
+
+            const donateUsdLink = document.createElement('a');
+            donateUsdLink.href = 'donate_usd.html';
+            donateUsdLink.style = "display: block; padding: 10px 15px; background: rgba(34,197,94,0.9); color: white; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; cursor: pointer; font-weight: bold;";
+            donateUsdLink.innerHTML = '<span class="desktop-text">💵 Donate USD</span><span class="mobile-text">$USD</span>';
+            donateUsdLink.title = 'International support';
+
+            const fsBtn = document.createElement('button');
+            fsBtn.id = 'fs-toggle';
+            fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
+            fsBtn.style = "display: block; padding: 10px 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;";
+
+            navIcons.appendChild(homeLink);
+            navIcons.appendChild(aboutLink);
+            navIcons.appendChild(donateLink);
+            navIcons.appendChild(donateUsdLink);
+            navIcons.appendChild(fsBtn);
+            document.body.appendChild(navIcons);
+
+            fsBtn.onclick = function() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(function(err) {
+                        alert('Error attempting to enable full-screen mode: ' + err.message);
+                    });
+                    fsBtn.innerHTML = '<span class="desktop-text">✕ Exit Full Screen</span><span class="mobile-text">✕</span>';
+                } else {
+                    document.exitFullscreen();
+                    fsBtn.innerHTML = '<span class="desktop-text">⛶ Full Screen</span><span class="mobile-text">⛶</span>';
+                }
+            };
+
+            function adjustScale() {
+                const card = document.getElementById('card');
+                const main = document.getElementById('main-area');
+                if (!card || !main) return;
+                card.style.transform = 'scale(1)';
+                const padding = 40;
+                const availableHeight = window.innerHeight - padding;
+                const cardHeight = card.offsetHeight;
+                if (cardHeight > availableHeight) {
+                    const scaleFactor = availableHeight / cardHeight;
+                    card.style.transform = 'scale(' + scaleFactor + ')';
+                    card.style.transformOrigin = 'center center';
+                }
+            }
+
+            window.addEventListener('resize', adjustScale);
+            window.addEventListener('orientationchange', adjustScale);
+            setTimeout(adjustScale, 100);
+        })();
+    </script>
+</body>
+</html>

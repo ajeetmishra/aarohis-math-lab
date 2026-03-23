@@ -81,6 +81,7 @@
         .card.teal { border-bottom: 8px solid #2dd4bf; }
         .card.red  { border-bottom: 8px solid #f87171; }
         .card.amber { border-bottom: 8px solid #fbbf24; }
+        .card.lime { border-bottom: 8px solid #84cc16; }
         
         /* Mobile responsive text - hide mobile text by default on desktop */
         .mobile-text { display: none; }
@@ -156,6 +157,7 @@
         .mode-card.orange  { border-bottom: 6px solid #fb923c; }
         .mode-card.red     { border-bottom: 6px solid #f87171; }
         .mode-card.amber   { border-bottom: 6px solid #fbbf24; }
+        .mode-card.lime    { border-bottom: 6px solid #84cc16; }
         .mode-card.indigo .mc-btn  { background: #6366f1; color: white; }
         .mode-card.purple .mc-btn  { background: #a855f7; color: white; }
         .mode-card.green .mc-btn   { background: #16a34a; color: white; }
@@ -164,6 +166,7 @@
         .mode-card.orange .mc-btn  { background: #ea580c; color: white; }
         .mode-card.red .mc-btn     { background: #dc2626; color: white; }
         .mode-card.amber .mc-btn   { background: #d97706; color: white; }
+        .mode-card.lime .mc-btn    { background: #65a30d; color: white; }
         .mode-card .mc-icon {
             font-size: 2.6rem;
             margin-bottom: 12px;
@@ -247,6 +250,12 @@
     <p class="subtitle">Select a mission to start your training!</p>
 
     <div class="grid">
+        <div class="card lime" onclick="showModeChoice('counting')">
+            <span class="icon">🧸</span>
+            <div class="title">Counting Objects</div>
+            <div class="desc">Count fun objects — emojis, animals, and more!</div>
+        </div>
+
         <div class="card teal" onclick="location.href='geometry.html'">
             <span class="icon">📐</span>
             <div class="title">Robotics Compass</div>
@@ -331,6 +340,18 @@
 
     <script>
         const modeConfigs = {
+            counting: {
+                title: '🧸 Choose Your Mode',
+                sub: 'Both modes cover counting fun objects on screen.',
+                flash: {
+                    url: 'counting.html', colorClass: 'lime', icon: '⚡', title: 'Flashcards',
+                    benefits: ['No typing — just count and reveal', 'Random fun emojis every time', 'Scattered or neat row layout', 'Great for beginners']
+                },
+                quiz: {
+                    url: 'counting_game.html', colorClass: 'green', icon: '🎯', title: 'Quiz',
+                    benefits: ['Type the count to build confidence', 'Tracks score, correct answers &amp; level', 'Level up every 10 correct answers', 'Streak celebrations with confetti 🎉']
+                }
+            },
             multiplication: {
                 title: '✖️ Choose Your Mode',
                 sub: 'Both modes cover the same tables — pick the style that suits you today.',

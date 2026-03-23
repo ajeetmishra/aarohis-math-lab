@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Counting Objects Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #65a30d;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --correct-color: #38b000;
+            --wrong-color: #e63946;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- SIDEBAR ---- */
+        #sidebar {
+            width: 280px;
+            min-width: 280px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        h2 { color: var(--accent-color); margin: 0 0 0.5rem 0; font-size: 1.4rem; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 12px;
+        }
+
+        label { font-weight: bold; font-size: 0.85rem; color: #4a4e69; }
+
+        select, input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(101, 163, 13, 0.2);
+        }
+
+        button:hover { background-color: #4d7c0f; }
+        button:active { transform: translateY(2px); }
+
+        /* ---- MAIN AREA ---- */
+        #main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+            gap: 24px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* ---- CARD ---- */
+        #card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 620px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid white;
+            padding: 30px 20px 24px;
+            transition: border-color 0.25s ease;
+        }
+
+        #card.correct { border-color: var(--correct-color); }
+        #card.wrong   { border-color: var(--wrong-color); }
+
+        #q-counter {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .emoji-zone {
+            font-size: 3rem;
+            line-height: 1.4;
+            max-width: 90%;
+            word-break: break-all;
+            user-select: none;
+            margin-bottom: 16px;
+        }
+
+        .emoji-zone.scattered {
+            position: relative;
+            width: 90%;
+            height: 200px;
+            font-size: 2.5rem;
+            word-break: normal;
+        }
+
+        .emoji-zone.scattered .emoji-item {
+            position: absolute;
+            transition: none;
+        }
+
+        /* Answer input */
+        #answer-input {
+            font-size: 2.8rem;
+            width: 180px;
+            text-align: center;
+            border: 3px solid #ced4da;
+            border-radius: 14px;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f8f9fa;
+        }
+
+        #answer-input:focus {
+            border-color: var(--accent-color);
+            background: white;
+        }
+
+        #answer-input:disabled {
+            background: #f1f3f5;
+            color: var(--text-muted);
+        }
+
+        #submit-btn {
+            margin-top: 14px;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+        }
+
+        #feedback {
+            min-height: 1.8rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #feedback.correct { color: var(--correct-color); }
+        #feedback.wrong   { color: var(--wrong-color); }
+
+        /* ---- STATS BAR ---- */
+        #stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            border-radius: 20px;
+            padding: 12px 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            min-width: 55px;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        #level-badge .stat-value { color: var(--accent-color); font-size: 1.5rem; }
+
+        .stat-divider {
+            width: 1px;
+            height: 28px;
+            background: #e9ecef;
+        }
+
+        #reset-stats-btn {
+            font-size: 0.75rem;
+            padding: 7px 14px;
+            background: #e63946;
+            border-radius: 8px;
+            box-shadow: none;
+        }
+
+        #reset-stats-btn:hover { background: #c1121f; }
+
+        /* ---- NAV ICONS ---- */
+        #nav-icons {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 4000;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        #nav-icons a, #nav-icons .nav-btn {
+            display: block;
+            padding: 9px 14px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: normal;
+            box-shadow: none;
+        }
+
+        #nav-icons a:hover, #nav-icons .nav-btn:hover {
+            background: rgba(0,0,0,0.7);
+        }
+
+        /* ---- MOBILE SIDEBAR TOGGLE ---- */
+        #menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 3000;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(101,163,13,0.3);
+        }
+
+        .desktop-text { display: inline; }
+        .mobile-text  { display: none; }
+
+        /* ---- MOBILE OVERRIDES ---- */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                width: 80%;
+                min-width: unset;
+                transition: left 0.3s ease;
+                z-index: 2000;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            }
+
+            #sidebar.open { left: 0; }
+            #menu-toggle  { display: block; }
+
+            #main-area { width: 100vw; padding: 10px; }
+            #card { width: 95%; padding: 20px 14px 18px; }
+
+            .emoji-zone { font-size: 2.2rem !important; }
+            .emoji-zone.scattered { height: 150px; }
+            #answer-input { font-size: 2rem; width: 150px; }
+            #submit-btn   { padding: 10px 28px; font-size: 1rem; }
+            #feedback     { font-size: 1rem; }
+
+            #stats-bar  { gap: 10px; padding: 10px 14px; }
+            .stat-value { font-size: 1.1rem; }
+            #level-badge .stat-value { font-size: 1.2rem; }
+
+            .desktop-text { display: none !important; }
+            .mobile-text  { display: inline !important; }
+
+            #nav-icons { top: 15px; right: 10px; gap: 5px; }
+            #nav-icons a, #nav-icons .nav-btn { padding: 8px 10px; font-size: 0.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            .stat-label { font-size: 0.55rem; }
+            .stat-value { font-size: 0.95rem; }
+            #level-badge .stat-value { font-size: 1rem; }
+            .stat-divider { display: none; }
+            .nav-text { display: none !important; }
+        }
+
+        /* ---- STREAK TOAST ---- */
+        #streak-toast {
+            position: fixed;
+            top: 42%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, var(--accent-color), #f59e0b);
+            color: white;
+            font-size: clamp(1.4rem, 5vw, 2.2rem);
+            font-weight: 900;
+            padding: 18px 36px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            z-index: 9999;
+            text-align: center;
+            pointer-events: none;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+        }
+        #streak-toast.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* ---- STREAK PROGRESS BAR ---- */
+        #streak-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            border-radius: 16px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        }
+        .streak-progress-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .streak-segments {
+            display: flex;
+            gap: 6px;
+        }
+        .streak-seg {
+            width: 36px;
+            height: 14px;
+            border-radius: 7px;
+            background: #e9ecef;
+            transition: background 0.4s, box-shadow 0.4s;
+        }
+        .streak-seg.filled {
+            background: linear-gradient(135deg, var(--accent-color), #f59e0b);
+            animation: throb 1.3s ease-in-out infinite;
+        }
+        @keyframes throb {
+            0%   { transform: scale(1);    box-shadow: 0 0 0 rgba(101,163,13,0); }
+            50%  { transform: scale(1.12); box-shadow: 0 0 10px rgba(101,163,13,0.45); }
+            100% { transform: scale(1);    box-shadow: 0 0 0 rgba(101,163,13,0); }
+        }
+        .streak-count-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            min-width: 28px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .streak-seg { width: 28px; height: 12px; }
+            #streak-progress { padding: 8px 12px; gap: 6px; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+<div id="streak-toast"></div>
+
+    <button id="menu-toggle">&#9776; Settings</button>
+
+    <div id="sidebar">
+        <h2>Counting Settings</h2>
+
+        <div class="input-group">
+            <label>Count Range</label>
+            <select id="countRange">
+                <option value="10" selected>1 to 10</option>
+                <option value="20">1 to 20</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Counting Mode</label>
+            <select id="countMode">
+                <option value="simple" selected>Simple Counting</option>
+                <option value="skip2">Skip Counting by 2s</option>
+                <option value="skip5">Skip Counting by 5s</option>
+                <option value="skip10">Skip Counting by 10s</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Layout</label>
+            <select id="layoutMode">
+                <option value="scattered" selected>Scattered (Fun!)</option>
+                <option value="rows">Neat Rows</option>
+            </select>
+        </div>
+
+        <button onclick="newGame()">Start New Game</button>
+
+        <a id="history-link" href="#"
+           style="margin-top:auto; font-size:0.85rem; color:var(--accent-color);
+                  text-decoration:underline; cursor:pointer; display:block; padding-top:20px;">
+            &#128220; View Session History (0)
+        </a>
+    </div>
+
+    <div id="main-area">
+
+        <div id="card">
+            <div id="q-counter">Question #1</div>
+            <div class="emoji-zone" id="emoji-zone"></div>
+            <input
+                type="number"
+                id="answer-input"
+                placeholder="?"
+                autocomplete="off"
+                inputmode="numeric"
+            >
+            <button id="submit-btn" onclick="submitAnswer()">Submit &#10003;</button>
+            <div id="feedback"></div>
+        </div>
+
+        <!-- Streak Progress Bar -->
+        <div id="streak-progress">
+            <span class="streak-progress-label">Streaks</span>
+            <div class="streak-segments">
+                <div class="streak-seg" id="seg-1"></div>
+                <div class="streak-seg" id="seg-2"></div>
+                <div class="streak-seg" id="seg-3"></div>
+                <div class="streak-seg" id="seg-4"></div>
+                <div class="streak-seg" id="seg-5"></div>
+            </div>
+            <span class="streak-count-label" id="streak-count-label">0/5</span>
+        </div>
+
+        <div id="stats-bar">
+            <div class="stat-item" id="level-badge">
+                <span class="stat-label">Level</span>
+                <span class="stat-value" id="stat-level">1</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Questions</span>
+                <span class="stat-value" id="stat-questions">0</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Correct</span>
+                <span class="stat-value" id="stat-correct">0</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Score</span>
+                <span class="stat-value" id="stat-score">--%</span>
+            </div>
+            <div class="stat-divider"></div>
+            <button id="reset-stats-btn" onclick="resetStats()">Reset Stats</button>
+        </div>
+
+    </div>
+
+    <script>
+    const EMOJIS = ['🍎','🐶','⭐','🌺','🦋','🎈','🐱','🌈','🎸','🐢','🍩','🦄','🏀','🎂','🐧','🌻','🚗','🍉','🐝','🎁'];
+
+    // ============================================================
+    // PERSISTENCE (localStorage)
+    // ============================================================
+    const STORAGE_KEY = 'counting_game_stats_v1';
+
+    let ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
+
+    function loadStats() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const saved = JSON.parse(raw);
+                ps.totalQuestions  = saved.totalQuestions  || 0;
+                ps.correctAnswers  = saved.correctAnswers  || 0;
+                ps.level           = saved.level           || 1;
+                sessionHistory      = saved.sessionHistory  || [];
+                sessionHistoryCount = sessionHistory.length;
+                qCount              = sessionHistoryCount + 1;
+            }
+        } catch (e) { /* ignore */ }
+        renderStats();
+        updateHistoryLink();
+    }
+
+    function saveStats() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(
+                Object.assign({}, ps, { sessionHistory: sessionHistory })
+            ));
+        } catch (e) { /* ignore */ }
+    }
+
+    function recalcLevel() {
+        ps.level = 1 + Math.floor(ps.correctAnswers / 10);
+    }
+
+    function renderStats() {
+        document.getElementById('stat-level').innerText     = ps.level;
+        document.getElementById('stat-questions').innerText = ps.totalQuestions;
+        document.getElementById('stat-correct').innerText   = ps.correctAnswers;
+        document.getElementById('stat-score').innerText     = ps.totalQuestions > 0
+            ? Math.round((ps.correctAnswers / ps.totalQuestions) * 100) + '%'
+            : '--%';
+    }
+
+    function resetStats() {
+        if (!confirm('Reset all saved progress? This cannot be undone.')) return;
+        ps = { totalQuestions: 0, correctAnswers: 0, level: 1 };
+        saveStats();
+        sessionHistory = [];
+        sessionHistoryCount = 0;
+        renderStats();
+        updateHistoryLink();
+    }
+
+    // ============================================================
+    // GAME STATE
+    // ============================================================
+    let currentAnswer       = null;
+    let awaitingNext        = false;
+    let currentStreak       = 0;
+    let qCount              = 1;
+    let sessionHistory      = [];
+    let sessionHistoryCount = 0;
+    let streakMilestones    = 0;
+
+    const emojiZone   = document.getElementById('emoji-zone');
+    const answerInput = document.getElementById('answer-input');
+    const feedbackEl  = document.getElementById('feedback');
+    const cardEl      = document.getElementById('card');
+    const submitBtn   = document.getElementById('submit-btn');
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function pickEmoji() {
+        return EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    }
+
+    function fireStreakConfetti(n) {
+        const toast = document.getElementById('streak-toast');
+        toast.textContent = '🎉 ' + n + ' in a row!';
+        toast.classList.add('show');
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 160, spread: 80, origin: { y: 0.55 } });
+        }
+        setTimeout(function() { toast.classList.remove('show'); }, 2400);
+    }
+
+    function generateProblem() {
+        const range = parseInt(document.getElementById('countRange').value);
+        const mode = document.getElementById('countMode').value;
+        const layout = document.getElementById('layoutMode').value;
+
+        let count;
+        if (mode === 'simple') {
+            count = getRandomInt(1, range);
+        } else if (mode === 'skip2') {
+            count = getRandomInt(1, Math.floor(range / 2)) * 2;
+        } else if (mode === 'skip5') {
+            count = getRandomInt(1, Math.floor(range / 5)) * 5;
+        } else {
+            count = getRandomInt(1, Math.floor(range / 10)) * 10;
+        }
+
+        currentAnswer = count;
+        const emoji = pickEmoji();
+
+        emojiZone.innerHTML = '';
+        emojiZone.className = 'emoji-zone';
+
+        if (layout === 'scattered') {
+            emojiZone.classList.add('scattered');
+            for (let i = 0; i < count; i++) {
+                const span = document.createElement('span');
+                span.className = 'emoji-item';
+                span.textContent = emoji;
+                span.style.left = Math.random() * 80 + 5 + '%';
+                span.style.top = Math.random() * 80 + 5 + '%';
+                span.style.transform = 'rotate(' + (Math.random() * 30 - 15) + 'deg)';
+                emojiZone.appendChild(span);
+            }
+        } else {
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                html += emoji + ' ';
+            }
+            emojiZone.textContent = html.trim();
+        }
+
+        answerInput.value    = '';
+        answerInput.disabled = false;
+        feedbackEl.innerText = '';
+        feedbackEl.className = '';
+        cardEl.className     = '';
+        awaitingNext         = false;
+        submitBtn.innerText  = 'Submit \u2713';
+
+        document.getElementById('q-counter').innerText = 'Question #' + qCount;
+        answerInput.focus();
+    }
+
+    function submitAnswer() {
+        if (awaitingNext) {
+            qCount++;
+            generateProblem();
+            return;
+        }
+
+        const raw = answerInput.value.trim();
+        if (raw === '') { answerInput.focus(); return; }
+        const userAnswer = parseInt(raw, 10);
+
+        const isCorrect = userAnswer === currentAnswer;
+
+        sessionHistory.push({
+            no: qCount,
+            prob: currentAnswer + ' objects',
+            ans: currentAnswer,
+            userAns: userAnswer,
+            correct: isCorrect
+        });
+        sessionHistoryCount++;
+        updateHistoryLink();
+
+        ps.totalQuestions++;
+        if (isCorrect) {
+            ps.correctAnswers++;
+            feedbackEl.innerText = '\u2713 Correct!';
+            feedbackEl.className = 'correct';
+            cardEl.className     = 'correct';
+        } else {
+            feedbackEl.innerText = '\u2717 Wrong \u2014 answer is ' + currentAnswer;
+            feedbackEl.className = 'wrong';
+            cardEl.className     = 'wrong';
+        }
+
+        if (isCorrect) {
+            currentStreak++;
+            if (currentStreak % 5 === 0) {
+                fireStreakConfetti(currentStreak);
+                streakMilestones++;
+                updateStreakBar();
+            }
+        } else {
+            currentStreak = 0;
+        }
+
+        recalcLevel();
+        saveStats();
+        renderStats();
+
+        awaitingNext         = true;
+        answerInput.disabled = true;
+        submitBtn.innerText  = 'Next \u2794';
+        submitBtn.focus();
+    }
+
+    function newGame() {
+        qCount = 1;
+        currentStreak = 0;
+        generateProblem();
+    }
+
+    // ============================================================
+    // STREAK PROGRESS BAR (visual only, no game reward)
+    // ============================================================
+    function updateStreakBar() {
+        for (var i = 1; i <= 5; i++) {
+            var seg = document.getElementById('seg-' + i);
+            var filled = streakMilestones % 5 === 0 && streakMilestones > 0 ? 5 : streakMilestones % 5;
+            if (i <= filled) {
+                seg.classList.add('filled');
+            } else {
+                seg.classList.remove('filled');
+            }
+        }
+        document.getElementById('streak-count-label').textContent = (streakMilestones % 5 || (streakMilestones > 0 ? 5 : 0)) + '/5';
+    }
+
+    // Enter key: submit or advance
+    answerInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
+    submitBtn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
+    });
+
+    // ============================================================
+    // SESSION HISTORY
+    // ============================================================
+    function updateHistoryLink() {
+        document.getElementById('history-link').innerText =
+            '\u{1F4DC} View Session History (' + sessionHistoryCount + ')';
+    }
+
+    document.getElementById('history-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (sessionHistory.length === 0) { alert('No questions answered yet!'); return; }
+        let report = 'Session History \u2014 ' + sessionHistory.length + ' question(s)\n\n';
+        sessionHistory.forEach(function(item) {
+            const mark = item.correct ? '\u2713' : '\u2717';
+            report += mark + '  Q' + item.no + ': ' + item.ans + ' objects';
+            if (!item.correct) report += '  (you entered: ' + item.userAns + ')';
+            report += '\n';
+        });
+        alert(report);
+    });
+
+    // ============================================================
+    // NAV ICONS
+    // ============================================================
+    (function() {
+        const nav = document.createElement('div');
+        nav.id = 'nav-icons';
+
+        function makeLink(href, html, title, bgColor) {
+            const a = document.createElement('a');
+            a.href = href;
+            a.innerHTML = html;
+            a.title = title;
+            if (bgColor) a.style.background = bgColor;
+            return a;
+        }
+
+        nav.appendChild(makeLink('index.html',
+            '\u{1F3E0}<span class="nav-text"> Home</span>', 'Home'));
+
+        nav.appendChild(makeLink('about.html',
+            '\u2139\uFE0F<span class="nav-text"> About</span>', 'About'));
+
+        nav.appendChild(makeLink('donate.html',
+            '<span class="desktop-text">\u2615 Donate \u20B999</span><span class="mobile-text">\u2615\u20B999</span>',
+            'Support with a coffee', 'rgba(255,165,0,0.9)'));
+
+        nav.appendChild(makeLink('donate_usd.html',
+            '<span class="desktop-text">\uD83D\uDCB5 Donate USD</span><span class="mobile-text">$USD</span>',
+            'International support', 'rgba(34,197,94,0.9)'));
+
+        const fsBtn = document.createElement('button');
+        fsBtn.className = 'nav-btn';
+        fsBtn.title     = 'Toggle Full Screen';
+        fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+        fsBtn.onclick   = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u2715 Exit Full Screen</span><span class="mobile-text">\u2715</span>';
+            } else {
+                document.exitFullscreen();
+                fsBtn.innerHTML = '<span class="desktop-text">\u26F6 Full Screen</span><span class="mobile-text">\u26F6</span>';
+            }
+        };
+        nav.appendChild(fsBtn);
+
+        document.body.appendChild(nav);
+    })();
+
+    // ============================================================
+    // MOBILE SIDEBAR TOGGLE
+    // ============================================================
+    (function() {
+        const toggleBtn = document.getElementById('menu-toggle');
+        const sidebar   = document.getElementById('sidebar');
+
+        toggleBtn.onclick = function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+            toggleBtn.innerHTML = sidebar.classList.contains('open')
+                ? '\u2715 Close'
+                : '\u2630 Settings';
+        };
+
+        document.getElementById('main-area').onclick = function() {
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                toggleBtn.innerHTML = '\u2630 Settings';
+            }
+        };
+    })();
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    loadStats();
+    updateStreakBar();
+    generateProblem();
+    </script>
+</body>
+</html>
