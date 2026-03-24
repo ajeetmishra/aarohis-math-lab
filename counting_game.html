@@ -628,12 +628,42 @@
 
         if (layout === 'scattered') {
             emojiZone.classList.add('scattered');
+            // Place emojis at random positions without overlap
+            const minDist = 8; // minimum distance in % between emoji centers
+            const positions = [];
+            const maxRetries = 100;
+            for (let i = 0; i < count; i++) {
+                let placed = false;
+                for (let attempt = 0; attempt < maxRetries; attempt++) {
+                    const x = Math.random() * 80 + 5;
+                    const y = Math.random() * 80 + 5;
+                    let overlap = false;
+                    for (let j = 0; j < positions.length; j++) {
+                        const dx = x - positions[j].x;
+                        const dy = y - positions[j].y;
+                        if (Math.sqrt(dx * dx + dy * dy) < minDist) {
+                            overlap = true;
+                            break;
+                        }
+                    }
+                    if (!overlap) { positions.push({ x, y }); placed = true; break; }
+                }
+                if (!placed) {
+                    const cols = Math.ceil(Math.sqrt(count));
+                    const row = Math.floor(i / cols);
+                    const col = i % cols;
+                    positions.push({
+                        x: 5 + (col / cols) * 80,
+                        y: 5 + (row / Math.ceil(count / cols)) * 80
+                    });
+                }
+            }
             for (let i = 0; i < count; i++) {
                 const span = document.createElement('span');
                 span.className = 'emoji-item';
                 span.textContent = emoji;
-                span.style.left = Math.random() * 80 + 5 + '%';
-                span.style.top = Math.random() * 80 + 5 + '%';
+                span.style.left = positions[i].x + '%';
+                span.style.top = positions[i].y + '%';
                 span.style.transform = 'rotate(' + (Math.random() * 30 - 15) + 'deg)';
                 emojiZone.appendChild(span);
             }
